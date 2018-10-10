@@ -3,6 +3,7 @@ from settings import DATAFOLDER
 import re
 from nltk.tokenize import RegexpTokenizer
 import math
+import os
 
 
 def tokenization (file_name):
@@ -22,27 +23,33 @@ def tokenization (file_name):
     return tokenized_text
 
 class Scoring:
-    #Mother class
-    def __init__(self):
-        #Constructor
-        pass
-
-class FrequencyScoring(Scoring):
-    #Compute the score with the frequency method
-    def __init__(self):
-        #Constructor
-        pass
-
-    def score (self, file_name, term):
+    def __tf__ (self, file_name, term):
         #This method use the term frequency inside the file to give a score to a term
         tokens = tokenization(file_name)
-        score = math.log10(1+(tokens.count(term) / len(tokens)))
+        tf = math.log10( 1+( tokens.count(term) / len(tokens) ) )
+        print(tf)
+        return tf
+
+    def __idf__ (self, term):
+        #This method use the inverse document frequency to give a score to a term
+
+        #number of documents where the term appears
+        nb_documents_term_appears = 0
+        for file in os.listdir(DATAFOLDER):
+            if self.__tf__(file, term)>0:
+                nb_documents_term_appears += 1
+
+        idf = math.log10( len(os.listdir(DATAFOLDER)) / (1+nb_documents_term_appears) )
+        return idf
+
+    def score (self, file_name, term):
+        tf = self.__tf__(file_name, term)
+        idf = self.__idf__(term)
+        score = tf * idf
         return score
 
-#test
-lala = tokenization("la012989")
-print(lala)
-
-lolo = FrequencyScoring()
-print(lili)
-lili = lolo.score("la012989", "the")
+# #test
+# lolo = Scoring()
+# for file in os.listdir(DATAFOLDER):
+#     lili = lolo.score(file_name=file,term="alien")
+#     print(lili)
