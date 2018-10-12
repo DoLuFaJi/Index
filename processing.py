@@ -23,33 +23,34 @@ def tokenization (file_name):
     return tokenized_text
 
 class Scoring:
-    def __tf__ (self, file_name, term):
+    #Class to get score for term
+    def __tf__ (self, tokens, term):
         #This method use the term frequency inside the file to give a score to a term
-        tokens = tokenization(file_name)
+        #tokens = tokenization(file_name)
         tf = math.log10( 1+( tokens.count(term) / len(tokens) ) )
-        print(tf)
         return tf
 
-    def __idf__ (self, term):
+    def __idf__ (self, nb_documents_term_appears, number_of_documents):
         #This method use the inverse document frequency to give a score to a term
 
         #number of documents where the term appears
-        nb_documents_term_appears = 0
-        for file in os.listdir(DATAFOLDER):
-            if self.__tf__(file, term)>0:
-                nb_documents_term_appears += 1
+        #nb_documents_term_appears = 0
+        #for file in os.listdir(DATAFOLDER):
+        #    if self.__tf__(file, term)>0:
+        #        nb_documents_term_appears += 1
 
-        idf = math.log10( len(os.listdir(DATAFOLDER)) / (1+nb_documents_term_appears) )
+        idf = math.log10( number_of_documents / (1+nb_documents_term_appears) )
         return idf
 
-    def score (self, file_name, term):
-        tf = self.__tf__(file_name, term)
-        idf = self.__idf__(term)
+    def compute_score (self, tokens, term, nb_documents_term_appears, number_of_documents):
+        #compute the score of a term in a document
+        tf = self.__tf__(tokens, term)
+        idf = self.__idf__(nb_documents_term_appears, number_of_documents)
         score = tf * idf
         return score
 
-# #test
-# lolo = Scoring()
-# for file in os.listdir(DATAFOLDER):
-#     lili = lolo.score(file_name=file,term="alien")
-#     print(lili)
+#test
+lolo = Scoring()
+for file in os.listdir(DATAFOLDER):
+    tokfile = tokenization(file)
+    lili = lolo.compute_score(tokens=tokfile, term="alien", nb_documents_term_appears=359, number_of_documents=732)
