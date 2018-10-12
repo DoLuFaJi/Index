@@ -1,26 +1,43 @@
 # This file countains the methods necessary for the data processing
 from settings import DATAFOLDER
 import re
+import nltk
 from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+#nltk.download('stopwords')
 import math
 import os
 
+class Tokenization:
 
-def tokenization (file_name):
-    #This method takes the name of the file and return the list of word inside it
-    file = open(DATAFOLDER+file_name, "r")
-    text_from_file = file.read()
+    def tokenization (self, file_name, remove_tags=1, remove_stopwords=1):
+        #This method takes the name of the file and return the list of word inside it
+        file = open(DATAFOLDER+file_name, "r")
+        text_from_file = file.read()
 
-    #remove all tags
-    cleanr = re.compile('<.*?>')
-    text_clean = re.sub(cleanr, '', text_from_file)
+        if remove_tags:
+            text = self.__remove_tags__(text_from_file)
+        if remove_stopwords:
+            text = self.__remove_stopwords__(text)
 
-    #list of strings (only words no punctuation)
-    tokenizer = RegexpTokenizer(r'\w+')
-    tokenized_text = tokenizer.tokenize(text_clean)
+        #list of strings (only words no punctuation)
+        tokenizer = RegexpTokenizer(r'\w+')
+        tokenized_text = tokenizer.tokenize(text)
 
-    file.close()
-    return tokenized_text
+        file.close()
+        return tokenized_text
+
+    def __remove_tags__(self, text):
+        #remove all tags
+        cleanr = re.compile('<.*?>')
+        text_clean = re.sub(cleanr, '', text)
+        return text_clean
+
+    def __remove_stopwords__(self, text):
+        #remove stopwords
+        pattern = re.compile(r'\b(' + r'|'.join(stopwords.words('english')) + r')\b\s*')
+        text_clean = pattern.sub('', text)
+        return text_clean
 
 class Scoring:
     #Class to get score for term
