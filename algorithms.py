@@ -1,4 +1,11 @@
+import pprint
+
+from document import Document
+
 class Algorithm:
+
+    def __init__(self, inverted_file):
+        self.inverted_file = inverted_file
 
     def search(self, word_list):
         pass
@@ -8,13 +15,15 @@ class Algorithm:
 
     def load_documents(self, word_list):
         # load document associated to word
-        posting_list = {}
+        documents_score_dictionary = {}
         for word in word_list:
             #load Document with score
-
+            documents_with_score = []
+            for filename, score in self.inverted_file[word].items():
+                documents_with_score.append(Document(filename, score))
             # add it to list
-            posting_list[word] = document_with_score
-        return posting_list
+            documents_score_dictionary[word] = documents_with_score
+        return documents_score_dictionary
 
     def score_sort(self, document):
         return document.rank
@@ -23,7 +32,8 @@ class NaiveAlgorithm(Algorithm):
 
     def search(self, word_list):
         documents_score_dictionary = self.load_documents(word_list)
-        self.naive_algorithm(word_list, documents_score_dictionary)
+        pprint.pprint(documents_score_dictionary)
+        return self.naive_algorithm(word_list, documents_score_dictionary)
 
     def naive_algorithm(self, word_list, documents_score_dictionary):
         # first optimisation select word with shortest document size
@@ -45,5 +55,5 @@ class NaiveAlgorithm(Algorithm):
                     break
             if can_be_added:
                 document_to_display.append(Document(document.name, score/len(word_list)))
-        document_to_display.sort(key=scoreSort)
+        document_to_display.sort(key=lambda doc: doc.score, reverse=True)
         return document_to_display

@@ -5,8 +5,9 @@ import mmap
 import pickle
 from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER
 
-from processing import tokenization, Scoring
-
+from processing import Tokenization, Scoring
+from algorithms import NaiveAlgorithm
+from document import Document
 
 class Vocabulary:
     def __init__(self, term):
@@ -17,7 +18,7 @@ class Vocabulary:
         return hash(self.term)
 
     def __eq__(self, other):
-        return self.term == other.term
+        return self.term == other
 
     def __str__(self):
         return self.term
@@ -34,37 +35,47 @@ def flush_on_disk(inverted_file, posting_lists):
 # resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024, RAM_LIMIT_MB*1024))
 
 # posting_lists = mmap.mmap(-1, RAM_LIMIT_MB*1024)
-
-#compute toi meme la frequency
-
 posting_lists = []
 vocabulary_set = {}
 try:
     score_calculator = Scoring()
+    tokenizator = Tokenization()
     list_documents = os.listdir(TEST_DATAFOLDER)
     nb_documents = len(list_documents)
     for filename in list_documents:
-        terms = tokenization(filename)
+        term_frequency = {}
+        terms = tokenizator.tokenization(filename)
+        nb_terms = len(terms)
         print(str(len(terms)) + ' terms to process')
         for term in terms:
+            # Compute frequency.
+            if term not in term_frequency:
+                term_frequency[term] = 0
+            term_frequency[term] += 1
+
             vocabulary = Vocabulary(term)
             if vocabulary not in vocabulary_set:
-                vocabulary_set[vocabulary] = []
-            print('frequency')
-            score = score_calculator.__tf__(terms, term)
-            print('frequency done')
-            print('append')
-            vocabulary_set[vocabulary].append((filename, score))
-            print('append done')
-            vocabulary.posting_list_size += 1
+                vocabulary_set[vocabulary] = {}
+            if filename not in vocabulary_set[vocabulary]:
+                 vocabulary_set[vocabulary][filename] = 0
+            # Update frequency each time we encounted this term.
+            vocabulary_set[vocabulary][filename] = term_frequency[term] / nb_terms
         print(filename + ' done')
 
     for vocabulary, posting_lists in vocabulary_set.items():
-        for document, score in posting_lists:
-            print('idf')
-            score *= score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)
-            print('idf done')
-    pprint.pprint(vocabulary_set)
+        vocabulary.posting_list_size = len(posting_lists.keys())
+        idf_for_term = score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)
+        for filename in posting_lists.keys():
+            # set new score
+            posting_lists[filename] *= idf_for_term
+
+
+    # pickle.dump(vocabulary_set, open('if.p', 'wb'))
+    # pprint.pprint(vocabulary_set)
+
+    algo = NaiveAlgorithm(vocabulary_set)
+    pprint.pprint(algo.search(['reserved']))
+    pprint.pprint(vocabulary_set['reserved'])
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)

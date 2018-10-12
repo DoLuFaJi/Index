@@ -10,7 +10,7 @@ import os
 
 class Tokenization:
 
-    def tokenization (self, file_name, remove_tags=1, remove_stopwords=1):
+    def tokenization(self, file_name, remove_tags=True, remove_stopwords=False):
         #This method takes the name of the file and return the list of word inside it
         file = open(DATAFOLDER+file_name, "r")
         text_from_file = file.read()
