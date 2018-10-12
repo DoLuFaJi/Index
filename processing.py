@@ -30,7 +30,7 @@ class Scoring:
         tf = math.log10( 1+( tokens.count(term) / len(tokens) ) )
         return tf
 
-    def __idf__ (self, term, nb_documents_term_appears, number_of_documents):
+    def __idf__ (self, nb_documents_term_appears, number_of_documents):
         #This method use the inverse document frequency to give a score to a term
 
         #number of documents where the term appears
@@ -45,7 +45,7 @@ class Scoring:
     def compute_score (self, tokens, term, nb_documents_term_appears, number_of_documents):
         #compute the score of a term in a document
         tf = self.__tf__(tokens, term)
-        idf = self.__idf__(term,nb_documents_term_appears, number_of_documents)
+        idf = self.__idf__(nb_documents_term_appears, number_of_documents)
         score = tf * idf
         return score
 
