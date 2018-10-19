@@ -3,7 +3,7 @@ import pprint
 import resource
 import mmap
 import pickle
-from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER
+from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME
 
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
@@ -40,7 +40,7 @@ vocabulary_set = {}
 try:
     score_calculator = Scoring()
     tokenizator = Tokenization()
-    list_documents = os.listdir(TEST_DATAFOLDER)
+    list_documents = os.listdir(DATAFOLDER)
     nb_documents = len(list_documents)
     for filename in list_documents:
         term_frequency = {}
@@ -69,8 +69,8 @@ try:
             # set new score
             posting_lists[filename] *= idf_for_term
 
-
-    # pickle.dump(vocabulary_set, open('if.p', 'wb'))
+    if SAVE_INDEX:
+        pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
     # pprint.pprint(vocabulary_set)
 
     algo = NaiveAlgorithm(vocabulary_set)

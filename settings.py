@@ -5,3 +5,6 @@ TEST_DATAFOLDER = "./data/test/"
 
 LIMIT_RAM = False
 RAM_LIMIT_MB = 200
+
+SAVE_INDEX = True
+INDEX_NAME = 'words_filename.p'
