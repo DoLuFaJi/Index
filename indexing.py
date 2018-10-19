@@ -65,7 +65,7 @@ try:
     index = 0
     for filename in list_files:
         doc_terms = tokenizator.tokenization(filename)
-
+        print(len(doc_terms.keys()))
         term_frequency = {}
         for doc, terms in doc_terms.items():
             nb_documents += 1
@@ -83,6 +83,8 @@ try:
                     index += 1
                 posting_lists[vocabulary_set[term]].append(Posting(doc, frequency))
 
+
+    print('done')
     for vocabulary, index_pl in vocabulary_set.items():
         vocabulary.posting_list_size = len(posting_lists[index_pl])
         idf_for_term = score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)

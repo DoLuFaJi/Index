@@ -29,7 +29,6 @@ class Tokenization:
         for doc in doc_in_file:
 
             docid = re.findall("<DOCID> (.*?) </DOCID>", doc)[0]
-            print(docid)
             if remove_tags:
                 text = self.__remove_tags__(doc)
             if remove_stopwords:
