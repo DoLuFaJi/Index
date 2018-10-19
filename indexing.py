@@ -33,13 +33,10 @@ class Vocabulary:
 class Posting:
     def __init__(self, doc, frequency):
         self.doc = doc
-        self.frequency = frequency
-        self.idf = -1
-        self.score = -1
+        self.score = frequency
 
     def compute_score(self, idf):
-        self.score = self.frequency * idf
-        self.idf = idf
+        self.score *= idf
 
     def __repr__(self):
         return self.doc + ' : ' + str(self.score)
@@ -59,15 +56,14 @@ vocabulary_set = {}
 try:
     score_calculator = Scoring()
     tokenizator = Tokenization()
-    list_files = os.listdir(TEST_DATAFOLDER)
+    list_files = os.listdir(DATAFOLDER)
     nb_files = len(list_files)
     nb_documents = 0
     index = 0
     for filename in list_files:
         doc_terms = tokenizator.tokenization(filename)
-        print(len(doc_terms.keys()))
-        term_frequency = {}
         for doc, terms in doc_terms.items():
+            term_frequency = {}
             nb_documents += 1
             # Count frequency.
             for term in terms:
@@ -81,15 +77,14 @@ try:
                     vocabulary_set[vocabulary] = index
                     posting_lists.insert(index, [])
                     index += 1
-                posting_lists[vocabulary_set[term]].append(Posting(doc, frequency))
+                posting_lists[vocabulary_set[term]].append((doc, frequency))
 
 
-    print('done')
     for vocabulary, index_pl in vocabulary_set.items():
         vocabulary.posting_list_size = len(posting_lists[index_pl])
         idf_for_term = score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)
-        for posting in posting_lists[index_pl]:
-            posting.compute_score(idf_for_term)
+        for doc, score in posting_lists[index_pl]:
+            score *= idf_for_term
 
     if SAVE_INDEX:
         pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
@@ -105,3 +100,8 @@ try:
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
     print('explosion')
+
+except:
+    print('Crash !')
+    import pdb
+    pdb.set_trace()
