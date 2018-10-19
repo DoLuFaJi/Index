@@ -9,6 +9,10 @@ from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
 from document import Document
 
+import nltk
+from nltk.stem import *
+from nltk.stem.porter import *
+
 class Vocabulary:
     def __init__(self, term):
         self.term = term
@@ -42,12 +46,14 @@ try:
     tokenizator = Tokenization()
     list_documents = os.listdir(DATAFOLDER)
     nb_documents = len(list_documents)
+    porter = nltk.PorterStemmer()
     for filename in list_documents:
         term_frequency = {}
         terms = tokenizator.tokenization(filename)
         nb_terms = len(terms)
-        print(str(len(terms)) + ' terms to process')
+        #print(str(len(terms)) + ' terms to process')
         for term in terms:
+            porter.stem(term)
             # Compute frequency.
             if term not in term_frequency:
                 term_frequency[term] = 0
@@ -60,7 +66,7 @@ try:
                  vocabulary_set[vocabulary][filename] = 0
             # Update frequency each time we encounted this term.
             vocabulary_set[vocabulary][filename] = term_frequency[term] / nb_terms
-        print(filename + ' done')
+#        print(filename + ' done')
 
     for vocabulary, posting_lists in vocabulary_set.items():
         vocabulary.posting_list_size = len(posting_lists.keys())
