@@ -43,7 +43,6 @@ class Tokenization:
                 tokenized_text = self.__stemming__(tokenized_text)
 
             dict[docid] = tokenized_text
-            print(dict)
 
         file.close()
         return dict
