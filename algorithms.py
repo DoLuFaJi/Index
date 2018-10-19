@@ -32,7 +32,9 @@ class NaiveAlgorithm(Algorithm):
 
     def search(self, word_list):
         documents_score_dictionary = self.load_documents(word_list)
+        print("-------------------10------------------------------")
         pprint.pprint(documents_score_dictionary)
+        print("-------------------11------------------------------")
         return self.naive_algorithm(word_list, documents_score_dictionary)
 
     def naive_algorithm(self, word_list, documents_score_dictionary):

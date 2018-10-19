@@ -9,6 +9,10 @@ from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
 from document import Document
 
+import nltk
+from nltk.stem import *
+from nltk.stem.porter import *
+
 class Vocabulary:
     def __init__(self, term):
         self.term = term
@@ -60,7 +64,7 @@ try:
     nb_documents = 0
     index = 0
     for filename in list_files:
-        doc_terms = {filename: tokenizator.tokenization(filename)}
+        doc_terms = tokenizator.tokenization(filename)
 
         term_frequency = {}
         for doc, terms in doc_terms.items():
