@@ -3,7 +3,7 @@ import pprint
 import resource
 import mmap
 import pickle
-from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG
+from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
 
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
@@ -49,14 +49,15 @@ def flush_on_disk(inverted_file, posting_lists):
 
 # limit RAM here.
 # resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024, RAM_LIMIT_MB*1024))
+file = open(MMAP_FILE, 'wb')
+mm_posting_lists = mmap.mmap(-1, 1024*1024*1024)
 
-# posting_lists = mmap.mmap(-1, RAM_LIMIT_MB*1024)
 posting_lists = []
 vocabulary_set = {}
 try:
     score_calculator = Scoring()
     tokenizator = Tokenization()
-    list_files = os.listdir(DATAFOLDER)
+    list_files = os.listdir(TEST_DATAFOLDER)
     nb_files = len(list_files)
     nb_documents = 0
     index = 0
@@ -76,22 +77,28 @@ try:
                 if term not in vocabulary_set:
                     vocabulary_set[vocabulary] = index
                     posting_lists.insert(index, [])
+                    # import pdb
+                    # pdb.set_trace()
+                    # mm_posting_lists[index] = []
+
                     index += 1
-                posting_lists[vocabulary_set[term]].append((doc, frequency))
+                posting_lists[vocabulary_set[term]].append(Posting(doc, frequency))
+                mm_posting_lists.seek(mm_posting_lists[vocabulary_set[term]])
+                mm_posting_lists.write(doc.encode())
 
 
     for vocabulary, index_pl in vocabulary_set.items():
         vocabulary.posting_list_size = len(posting_lists[index_pl])
         idf_for_term = score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)
-        for doc, score in posting_lists[index_pl]:
-            score *= idf_for_term
+        for posting in posting_lists[index_pl]:
+            posting.compute_score(idf_for_term)
 
     if SAVE_INDEX:
         pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
 
     import pdb
     pdb.set_trace()
-
+    # pprint.pprint(mm_posting_lists)
     if DEBUG:
         algo = NaiveAlgorithm(vocabulary_set)
         pprint.pprint(algo.search(['reserved']))
@@ -100,8 +107,10 @@ try:
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
     print('explosion')
+# except:
+#     print('Crash !')
+    # import pdb
+    # pdb.set_trace()
 
-except:
-    print('Crash !')
-    import pdb
-    pdb.set_trace()
+
+file.close()
