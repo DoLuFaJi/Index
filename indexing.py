@@ -7,6 +7,7 @@ from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDE
 
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
+from algorithms import FaginsThreshold_Algorithm
 from document import Document
 
 import nltk
@@ -79,9 +80,9 @@ try:
         pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
     # pprint.pprint(vocabulary_set)
 
-    algo = NaiveAlgorithm(vocabulary_set)
-    pprint.pprint(algo.search(['reserved']))
-    pprint.pprint(vocabulary_set['reserved'])
+    algo = FaginsThreshold_Algorithm(vocabulary_set)
+    pprint.pprint(algo.search(3,['156341']))
+    pprint.pprint(vocabulary_set['156341'])
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
