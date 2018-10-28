@@ -130,10 +130,14 @@ class FaginsThreshold_Algorithm(Algorithm):
 
 # 2.1.1
             for documents_with_score in posting_list:
+                found = False
                 for document_found in documents_with_score :
                     if document_found.doc == d :
                         scores.append(document_found.score)
+                        found = True
                         break
+                if not found :
+                    scores.append(0)
             mu = sum(scores) / float(len(scores))
 # 2.1.2
             if len(C) < k :

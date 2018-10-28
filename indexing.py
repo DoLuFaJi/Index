@@ -3,7 +3,7 @@ import pprint
 import resource
 import mmap
 import pickle
-from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
+from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, DATAFOLDER_ALGO, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
 
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
@@ -58,7 +58,7 @@ vocabulary_set = {}
 try:
     score_calculator = Scoring()
     tokenizator = Tokenization()
-    list_files = os.listdir(DATAFOLDER)
+    list_files = os.listdir(TEST_DATAFOLDER)
     nb_files = len(list_files)
     nb_documents = 0
     index = 0
@@ -103,7 +103,7 @@ try:
     # pprint.pprint(mm_posting_lists)
     if DEBUG:
         algo = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
-        pprint.pprint(algo.search(4,['reserved']))
+        pprint.pprint(algo.search(10,['reserve','tailback']))
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)

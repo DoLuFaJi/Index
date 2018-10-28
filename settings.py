@@ -2,6 +2,7 @@
 
 DATAFOLDER = "./data/latimes/"
 TEST_DATAFOLDER = "./data/test/"
+DATAFOLDER_ALGO = "./data/test_algo/"
 
 LIMIT_RAM = False
 RAM_LIMIT_MB = 200
