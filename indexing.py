@@ -58,7 +58,7 @@ vocabulary_set = {}
 try:
     score_calculator = Scoring()
     tokenizator = Tokenization()
-    list_files = os.listdir(TEST_DATAFOLDER)
+    list_files = os.listdir(DATAFOLDER)
     nb_files = len(list_files)
     nb_documents = 0
     index = 0
@@ -97,13 +97,13 @@ try:
     if SAVE_INDEX:
         pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
 
-    import pdb
-    pdb.set_trace()
+#    import pdb
+#    pdb.set_trace()
+
     # pprint.pprint(mm_posting_lists)
     if DEBUG:
-        algo = NaiveAlgorithm(vocabulary_set)
-        pprint.pprint(algo.search(['reserved']))
-        pprint.pprint(vocabulary_set['reserved'])
+        algo = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
+        pprint.pprint(algo.search(4,['reserved']))
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)

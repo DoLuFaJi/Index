@@ -1,11 +1,11 @@
 import pprint
-
 from document import Document
 
 class Algorithm:
 
-    def __init__(self, inverted_file):
-        self.inverted_file = inverted_file
+    def __init__(self, vocabulary_set, posting_lists_all):
+        self.posting_lists_all = posting_lists_all
+        self.vocabulary_set = vocabulary_set
 
     def search(self, word_list):
         pass
@@ -17,13 +17,8 @@ class Algorithm:
         # load document associated to word
         posting_list = []
         for word in query_list:
-            #load Document with score
-            documents_with_score = []
-            for filename, score in self.inverted_file[word].items():
-                documents_with_score.append(Document(filename, score))
-            # add it to list
-            posting_list.append(documents_with_score)
-        return documents_score_dictionary
+            posting_list.append(self.posting_lists_all[self.vocabulary_set[word]])
+        return posting_list
 
     def score_sort(self, document):
         return document.rank
@@ -46,7 +41,7 @@ class NaiveAlgorithm(Algorithm):
         for i in (0, query_size):
             list_iterator[i] = iter(posting_list[i])
         # algorithm start here
-        while !end_of_file:
+        while not end_of_file:
             for i in (0, query_size):
                 value = next(list_iterator[i])
                 # if (value.name < maxDoc): change to while
@@ -99,46 +94,44 @@ class NaiveAlgorithm(Algorithm):
                 document_to_display.append(Document(document.name, score/len(word_list)))
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
 
-        return document_to_display 
+        return document_to_display
 '''
 
 class FaginsThreshold_Algorithm(Algorithm):
 
-    def __init__(self, inverted_file):
-        self.inverted_file = inverted_file
-
     def search(self,k,word_list):
-        documents_score_dictionary = self.load_documents(word_list)
-        pprint.pprint(documents_score_dictionary)
-        return self.faginsThreshold_algorithm(k,word_list, documents_score_dictionary)
-    def faginsThreshold_algorithm(self,k,word_list,documents_score_dictionary):
+        posting_list = self.load_documents(word_list)
+        return self.faginsThreshold_algorithm(k,word_list, posting_list)
+    def faginsThreshold_algorithm(self,k,word_list,posting_list):
 
 # slide dans le dossier note page 20
 # 1
         C = {}
-        pointers = {}
-        tau = 2
-        mu_min = 2.2
+        tau = 100000
+        mu_min = 100001
         doc_seen_for_each_qt = {}
-        for word in word_list:
-            pointers[word] = 0
-        for word,documents_with_score in documents_score_dictionary.items() :
+        pointers = [0] * len(word_list)
+        for documents_with_score in posting_list :
             documents_with_score.sort(key=lambda doc: doc.score, reverse=True)
 # 2
-        while ( len(C) < k and tau < mu_min) :
+        while ( len(C) < k or (tau == 100000 and tau > mu_min and tau != 100000)) :
 # 2.1
-            max_score = -2
+            max_score = -200000
             scores = []
             d = ""
-            for word,documents_with_score in documents_score_dictionary.items() :
-                pt = pointers[word]
+            index_pl = 0
+            for documents_with_score in posting_list :
+                pt = pointers[index_pl]
                 if documents_with_score[pt].score > max_score :
                     max_score = documents_with_score[pt].score
-                    d = documents_with_score[pt].name
+                    d = documents_with_score[pt].doc
+                    word_index_pl = index_pl
+                index_pl += 1
+
 # 2.1.1
-            for word,documents_with_score in documents_score_dictionary.items() :
+            for documents_with_score in posting_list:
                 for document_found in documents_with_score :
-                    if document_found.name == d :
+                    if document_found.doc == d :
                         scores.append(document_found.score)
                         break
             mu = sum(scores) / float(len(scores))
@@ -160,21 +153,29 @@ class FaginsThreshold_Algorithm(Algorithm):
                     if mu_min > score:
                         mu_min = score
 # faire avancer les pointeurs
-                for word,documents_with_score in documents_score_dictionary.items() :
-                    pt = pointers[word]
-                    while C.has_key(documents_with_score[pt].name) :
-                        pt += 1
+            index_pl = 0
+            for documents_with_score in posting_list:
+                pt = pointers[index_pl]
+                while pt < len(documents_with_score) and documents_with_score[pt].doc in C :
+                    pt += 1
+                pointers[index_pl] = pt
+                index_pl += 1
 # 2.1.4
-            doc_seen_for_each_qt[word] = 1
+            doc_seen_for_each_qt[word_index_pl] = 1
             taus = []
-            if len(doc_seen_for_each_qt) == k :
-                for word,documents_with_score in documents_score_dictionary.items() :
-                    taus.append(documents_with_score[pt-1].score)
+            if len(doc_seen_for_each_qt) == len(word_list) :
+                index_pl = 0
+                for documents_with_score in posting_list :
+                    taus.append(documents_with_score[pointers[index_pl]-1].score)
                 tau = sum(taus) / float(len(taus))
 # 3
-        return C
+        document_to_display = []
+        for d, mu in C.items() :
+            document_to_display.append((d,mu))
+        document_to_display.sort(key=lambda data: data[1], reverse=True)
+        return document_to_display
 
-
+'''
 class FaginAlgorithm(Algorithm):
 
         def search(self, word_list):
@@ -235,3 +236,4 @@ class AgregateAvg:
         self.sum_value += value_to_add
         self.n += n
         self.value = self.sum_value / self.n
+'''
