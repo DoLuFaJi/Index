@@ -2,9 +2,13 @@
 
 DATAFOLDER = "./data/latimes/"
 TEST_DATAFOLDER = "./data/test/"
+DATAFOLDER_ALGO = "./data/test_algo/"
 
 LIMIT_RAM = False
 RAM_LIMIT_MB = 200
 
-SAVE_INDEX = True
-INDEX_NAME = 'words_filename.p'
+SAVE_INDEX = False
+INDEX_NAME = 'index.p'
+MMAP_FILE = 'mmap.txt'
+
+DEBUG = True
