@@ -7,6 +7,7 @@ from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, DATAFOLDER_ALGO,
 
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
+from algorithms import FaginAlgorithm
 from algorithms import FaginsThreshold_Algorithm
 from document import Document
 
@@ -102,7 +103,7 @@ try:
 
     # pprint.pprint(mm_posting_lists)
     if DEBUG:
-        algo = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
+        algo = FaginAlgorithm(vocabulary_set,posting_lists) #NaiveAlgorithm(vocabulary_set,posting_lists) #FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
         pprint.pprint(algo.search(10,['reserve','tailback']))
 
 except MemoryError:
