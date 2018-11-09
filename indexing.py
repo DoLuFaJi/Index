@@ -103,25 +103,44 @@ try:
 
     # pprint.pprint(mm_posting_lists)
     if DEBUG:
-        algo = FaginAlgorithm(vocabulary_set,posting_lists)
-        #algo = NaiveAlgorithm(vocabulary_set,posting_lists)
-        #algo = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
-
-        N = int(input('Top ? (-1 to end the search) :'))
-
+        algoF = FaginAlgorithm(vocabulary_set,posting_lists)
+        algoN = NaiveAlgorithm(vocabulary_set,posting_lists)
+        algoFT = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
+        while True:
+            try :
+                N = int(input('Top ? (-1 to end the search) :'))
+                if N > -2 :
+                    break
+            except :
+                print ("Enter an integer plz")
         while not N == -1 :
-            print("Terms end by 'E' : ")
+            print("Enter terms one by one, line by line and end by 'E' : ")
             terms = []
             x = input('')
             while not x == "E" :
                 terms.append(x)
                 x = input('')
 
-
-            pprint.pprint(algo.search(N,terms))
-
-
-            N = int(input('Top ? (-1 to end the search) :'))
+            while True :
+                algo_op = int(input("0 pour Naive, 1 pour Fagin, 2 pour FaginsThreshold\n"))
+                if algo_op == 0 :
+                    pprint.pprint(algoN.search(N,terms))
+                    break
+                elif algo_op == 1 :
+                    pprint.pprint(algoF.search(N,terms))
+                    break
+                elif algo_op == 2 :
+                    pprint.pprint(algoFT.search(N,terms))
+                    break
+                else :
+                    print ("0 or 1 or 2 plz")
+            while True:
+                try :
+                    N = int(input('Top ? (-1 to end the search) :'))
+                    if N > -2 :
+                        break
+                except :
+                    print ("Enter an integer plz")
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
