@@ -103,7 +103,22 @@ try:
     # pprint.pprint(mm_posting_lists)
     if DEBUG:
         algo = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
-        pprint.pprint(algo.search(10,['reserve','tailback']))
+
+        N = int(input('Top ? (-1 to end the search) :'))
+
+        while not N == -1 :
+            print("Terms end by 'E' : ")
+            terms = []
+            x = input('')
+            while not x == "E" :
+                terms.append(x)
+                x = input('')
+
+
+            pprint.pprint(algo.search(N,terms))
+
+            
+            N = int(input('Top ? (-1 to end the search) :'))
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
