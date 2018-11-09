@@ -33,7 +33,7 @@ class NaiveAlgorithm(Algorithm):
 
     def naive_algorithm(self, query_list, posting_list):
         end_of_file = False
-        maxDoc = '0'
+        maxDoc = 0
         seen = 0
         query_size = len(query_list)
         score = 0
