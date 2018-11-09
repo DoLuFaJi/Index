@@ -94,6 +94,12 @@ class Scoring:
         score = tf * idf
         return score
 
+
+def idf(nb_documents_term_appears, number_of_documents):
+    #This method use the inverse document frequency to give a score to a term
+    idf = math.log10(number_of_documents / (1+nb_documents_term_appears))
+    return idf
+
 #test
 #lolo = Scoring()
 #lala = Tokenization()

@@ -2,9 +2,12 @@ import os
 import pprint
 import resource
 import mmap
+import numpy as np
+from numpy.lib.format import open_memmap
 import pickle
-from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
 
+
+from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
 from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
 from document import Document
@@ -48,9 +51,11 @@ def flush_on_disk(inverted_file, posting_lists):
 
 
 # limit RAM here.
-# resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024, RAM_LIMIT_MB*1024))
-file = open(MMAP_FILE, 'wb')
-mm_posting_lists = mmap.mmap(-1, 1024*1024*1024)
+resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
+# file = open(MMAP_FILE, 'wb')
+# mm_posting_lists = mmap.mmap(-1, 1024*1024*1024)
+# mm_posting_lists = np.memmap(MMAP_FILE, dtype='float32', mode='w+', shape=(10**13,2))
+# mm_posting_lists = open_memmap(MMAP_FILE, mode='w+', dtype=np.ubyte, shape=(10**9, 2))
 
 posting_lists = []
 vocabulary_set = {}
@@ -83,8 +88,9 @@ try:
 
                     index += 1
                 posting_lists[vocabulary_set[term]].append(Posting(doc, frequency))
-                mm_posting_lists.seek(mm_posting_lists[vocabulary_set[term]])
-                mm_posting_lists.write(doc.encode())
+                # import pdb; pdb.set_trace()
+                # mm_posting_lists.seek(mm_posting_lists[vocabulary_set[term]])
+                # mm_posting_lists.write(doc.encode())
 
 
     for vocabulary, index_pl in vocabulary_set.items():
@@ -95,6 +101,7 @@ try:
 
     if SAVE_INDEX:
         pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
+        pickle.dump(posting_lists, open(MMAP_FILE, 'wb'))
 
     import pdb
     pdb.set_trace()
@@ -105,12 +112,15 @@ try:
         pprint.pprint(vocabulary_set['reserved'])
 
 except MemoryError:
-    flush_on_disk(vocabulary_set, posting_lists)
     print('explosion')
+    import pdb; pdb.set_trace()
+    # flush_on_disk(vocabulary_set, posting_lists)
+
 # except:
 #     print('Crash !')
     # import pdb
     # pdb.set_trace()
 
-
+print(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+print('memory used')
 file.close()
