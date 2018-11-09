@@ -2,7 +2,9 @@ import os
 import pickle
 import resource
 import mmap
-from struct import pack
+import contextlib
+from heapq import merge
+from struct import pack, unpack
 from collections import Counter
 
 from processing import Tokenization, idf
@@ -22,7 +24,7 @@ class InvertedFileBuilder:
         self.pl_file.close()
 
         self.pl_index = 0
-        self.list_files = set(os.listdir(TEST_DATAFOLDER))
+        self.list_files = set(os.listdir(DATAFOLDER))
         self.nb_documents = 0
         self.complete = False
         self.part = 0
@@ -30,44 +32,38 @@ class InvertedFileBuilder:
         self.pl_file = open(PL_FILE, 'r+b')
         self.__open_new_pl__()
         self.map_term_id = {}
+        self.map_id_term = {}
         self.term_id = 0
 
     def __open_new_pl__(self):
-        self.posting_list = mmap.mmap(self.pl_file.fileno(), self.chunk_size, access=mmap.ACCESS_WRITE, offset=self.part*self.chunk_size)
-        self.posting_list.write(b'stop')
-        self.posting_list.seek(0)
+        # self.posting_list = mmap.mmap(self.pl_file.fileno(), self.chunk_size, access=mmap.ACCESS_WRITE, offset=self.part*self.chunk_size)
+        # self.posting_list.write(b'stop')
+        # self.posting_list.seek(0)
+        self.posting_list = []
 
     def build_partial(self):
-        try:
-            filename_processed = set()
-            tokenize = Tokenization()
-            for filename in self.list_files:
-                map_doc_terms = tokenize.tokenization(filename, remove_tags=True, remove_stopwords=True, stemming=False)
-                documents_processed = 0
-                for doc, terms in map_doc_terms.items():
-                    documents_processed += 1
-                    term_frequency = Counter(terms)
-                    for term, frequency in term_frequency.items():
-                        if term not in self.inverted_file:
-                            self.map_term_id[term] = self.term_id
-                            self.inverted_file[term] = {'index': [], 'size': 0, 'bytesize': 0}
-                        # to_write = pack('III', *(int(doc), self.map_term_id[term], frequency))
-                        to_write = (int(doc), self.map_term_id[term], frequency)
-                        self.posting_list.append(to_write)
-                        # if term == 'youth':
-                        #     print(doc + ' ' + str(frequency) + ' ' + str(self.posting_list.tell()) + ' ' + str(len(to_write)))
-                        self.inverted_file[term]['index'].append(self.part * self.chunk_size + self.posting_list.tell())
-                        # self.posting_list.write(to_write)
-                        self.inverted_file[term]['size'] += 1
-                        self.inverted_file[term]['bytesize'] += len(to_write)
-                filename_processed.add(filename)
-                self.nb_documents += documents_processed
-
-        except ValueError as e:
-            print(e)
-            self.list_files.difference_update(filename_processed)
-            self.flush()
-            self.build_partial()
+        filename_processed = set()
+        tokenize = Tokenization()
+        documents_processed = 0
+        for filename in self.list_files:
+            map_doc_terms = tokenize.tokenization(filename, remove_tags=True, remove_stopwords=True, stemming=False)
+            for doc, terms in map_doc_terms.items():
+                documents_processed += 1
+                if documents_processed > 1000:
+                    self.flush()
+                    documents_processed = 0
+                term_frequency = Counter(terms)
+                for term, frequency in term_frequency.items():
+                    if term not in self.map_term_id:
+                        self.map_term_id[term] = self.term_id
+                        self.map_id_term[self.term_id] = term
+                        self.term_id += 1
+                    to_write = (int(doc), self.map_term_id[term], frequency)
+                    self.posting_list.append(to_write)
+                    # if term == 'youth':
+                    #     print(doc + ' ' + str(frequency) + ' ' + str(self.posting_list.tell()) + ' ' + str(len(to_write)))
+            filename_processed.add(filename)
+            self.nb_documents += documents_processed
 
     def compute_idf(self):
         for term, info in self.inverted_file.items():
@@ -79,25 +75,48 @@ class InvertedFileBuilder:
 
     def flush(self):
         self.part += 1
-        self.posting_list.flush()
+        self.posting_list.sort(key=lambda entry: (entry[1], entry[0]))
+        pl_file = open(PL_FILE+'.'+str(self.part), 'w')
+        for tuple in self.posting_list:
+            pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
+        pl_file.close()
         self.__open_new_pl__()
 
-        pickle.dump(self.inverted_file, open(INVERTED_FILE+'.'+str(self.part), 'wb'))
-        self.inverted_file = {}
-        print('Flushed if and pl to disk, part ' + str(self.part))
+        print('Flushed pl to disk, part ' + str(self.part))
 
     def merge(self):
-        self.inverted_file = pickle.load(open(INVERTED_FILE+'.'+str(1), 'rb'))
-        for i in range(2, self.part+1):
-            partial_if = pickle.load(open(INVERTED_FILE+'.'+str(i), 'rb'))
-            for term, info in partial_if.items():
-                if term not in self.inverted_file:
-                    self.inverted_file[term] = info
+        self.inverted_file = {}
+        merged = 1
+        to_merge = []
+        for i in range(1, self.part+1):
+            to_merge.append(PL_FILE+'.'+str(i))
+
+        merged_pl = []
+        with contextlib.ExitStack() as stack:
+            files = [stack.enter_context(open(fn)) for fn in to_merge]
+            with open(PL_FILE, 'wb') as f:
+                for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]))):
+                    docid, termid, frequency = line.split(' ')
+                    to_write = pack('III', *(int(docid), int(termid), int(frequency)))
+                    f.write(to_write)
+
+        nb_lines = 0
+        end_of_file = False
+        with open(PL_FILE, 'r+b') as f:
+            while not end_of_file:
+                chunk = f.read(12)
+                if chunk:
+                    docid, termid, frequency = unpack('III', chunk)
+                    term = self.map_id_term[termid]
+                    if term not in self.inverted_file:
+                        self.inverted_file[term] = {'index': nb_lines, 'size': 0, 'idf': 0}
+                    self.inverted_file[term]['size'] += 1
+                    nb_lines += 1
                 else:
-                    self.inverted_file[term]['size'] += info['size']
-                    self.inverted_file[term]['bytesize'] += info['bytesize']
-                    self.inverted_file[term]['index'].extend(info['index'])
-        import pdb; pdb.set_trace()
+                    end_of_file = True
+
+        for term, info in self.inverted_file.items():
+            self.inverted_file[term]['idf'] = idf(info['size'], self.nb_documents)
 
 if LIMIT_RAM:
     resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
@@ -110,5 +129,5 @@ except MemoryError:
 ifb.flush()
 ifb.merge()
 
-# from pprint import pprint as pp
-# import pdb; pdb.set_trace()
+from pprint import pprint as pp
+import pdb; pdb.set_trace()
