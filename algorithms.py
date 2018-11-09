@@ -144,7 +144,7 @@ class FaginsThreshold_Algorithm(Algorithm):
                         found = True
                         break
                 if not found :
-                    scores.append(0)
+                    scores.append(-10000)
             mu = sum(scores) / float(len(scores))
 # 2.1.2
             if len(C) < k :
