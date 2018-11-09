@@ -1,4 +1,5 @@
 import pprint
+import copy
 from document import Document
 
 class Algorithm:
@@ -49,25 +50,25 @@ class NaiveAlgorithm(Algorithm):
                 while(value.name < maxDoc):
                     value = next(list_iterator[i], None)
                     # end of list not handled todo handle it!!!!! edit should be handled
-                    if(value == None):
+                    if value == None:
                         end_of_file = True
                         break
                 # need improvement
-                if (end_of_file):
+                if end_of_file:
                     break
 
-                if(value.name == maxDoc):
-                    if(seen == query_size):
+                if value.name == maxDoc:
+                    if seen == query_size:
                         document_to_display.append(Document(maxDoc, score/query_size))
                         # to do handle end of list edit done
                         value = next(list_iterator[i], None)
-                        if(value == None):
+                        if value == None:
                             end_of_file = True #end of file migth be useless because of break
                             break
                     else:
                         seen += 1
                         score += value.score
-                if(value.name > maxDoc):
+                if value.name > maxDoc:
                     maxDoc = value.name
                     score = value.score
                     seen = 1
@@ -179,65 +180,90 @@ class FaginsThreshold_Algorithm(Algorithm):
         document_to_display.sort(key=lambda data: data[1], reverse=True)
         return document_to_display
 
-'''
 class FaginAlgorithm(Algorithm):
 
-        def search(self, word_list):
-            documents_score_dictionary = self.load_documents(word_list)
-            pprint.pprint(documents_score_dictionary)
-            return self.naive_algorithm(word_list, documents_score_dictionary)
+        def search(self, query_list):
+            posting_list = self.load_documents(query_list)
+            pprint.pprint(posting_list)
+            posting_list_sorted_by_score = sort_posting_list(posting_list)
+            len(query_list)
+            return self.fagin_algorithm(query_list, posting_list_sorted, posting_list, 5) # k = 5 todo add variable
+
+        def sort_posting_list(self, posting_list):
+            posting_list_sorted = copy.deepcopy(posting_list) # check if it works or not
+            for documents_with_score in posting_list_sorted :
+                documents_with_score.sort(key=lambda doc: doc.score, reverse=True)
+            return posting_list_sorted
+        def create_dictionary_from_posting_list(self, posting_list, n): #needed for good access time or use a btree library
+            posting_list_dictionary = [{}] * n # should works
+            for i in range(0, n):
+                for document in posting_list:
+                    posting_list_dictionary[i][document.name] = document # should work
+            return posting_list_dictionary
 
         def fagin_algorithm(self, query_list, posting_list_sorted, posting_list, k):
             n = len(query_list) #todo get smallest document size
             list_iterator = []
+            selected_document = {} # M : [avg, nbItem]
+            document_to_display = [] # C: [avg]
             # set cursor for parallel scan
             for i in (0, query_size):
-                list_iterator[i] = iter(posting_list[i])
+                list_iterator[i] = iter(posting_list_sorted[i])
 
+            exit_condition = False
             #Fagin start
-            while exit_condition: # |C|=k or end of file
+            while !exit_condition: # |C|=k or end of file
                 for i in (0, query_size):
                     # work here
-
-            first_list = documents_score_dictionary[[0]]
-            selected_document = {} # M : [avg, nbItem]
-            document_to_display = {} # C: [avg]
-            for i in range(1, n):
-                for word in word_list:
-                    document = documents_score_dictionary_sorted[word]
+                    document = next(list_iterator[i], None)
+                    if document == None:
+                        break
                     if document not in selected_document:
-                        selected_document[document] = AgregateAvg(document.score, 1, document.name)
+                        selected_document[document] = AgregateAvg(document.score, 1, document.name, i)
                     else:
-                        selected_document[document].updateAvg(document.score)
-                        # todo check if it works
+                        selected_document[document].updateAvg(document.score, i)
                         if selected_document[document].n == n:
-                            document_to_display[document] = selected_document[document]
+                            document_to_display.append(selected_document[document])
                             del selected_document[document]
-                            if len(document_to_display) == k: # change to >=
-#3. For each d ∈ M
-#1. Random access to all remaining qt to compute the aggregated score of d
-#2. Insert (d,s(t1+t2+…, d)) into C
-            for document in document_to_display:
-                # complete it... easier said than done...
-# ??????
-            for i in range(1, len(word_list)):
-                for word in word_list:
-
+                            if len(document_to_display) >= k:
+                                exit_condition = True
+                                break
+            for document in selected_document:
+                can_be_added = True
+                query_term_to_see = document.unseen_query_term()
+                for query_term in query_term_to_see:
+                    found_document = posting_list[i].get(document.document, None)
+                    if found_document == None: # if doc not found
+                        can_be_added = False
+                        break
+                    score = found_document.score
+                    document.updateAvg(score, i)
+                if can_be_added:
+                    document_to_display.append(selected_document[document])
+                # no need to remove from selected document
             document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-            return document_to_display
+            return document_to_display[:k]
 
 class AgregateAvg:
     value = 0
-    def __init__(self, first_value, n, document):
+    def __init__(self, first_value, n, document, i):
         self.sum_value = first_value
         self.n = n
-        self.document # useless !!!!!!!!!!!!!!
+        self.document # useless ! edit finaly it's useful
+        self.seen = [False] * n # initalize
+        self.seen[i] = True # seen by the query term i
 
     def __repr__(self):
         return self.document
 
-    def updateAvg(self, value_to_add):
+    def updateAvg(self, value_to_add, i):
         self.sum_value += value_to_add
-        self.n += n
         self.value = self.sum_value / self.n
-'''
+        self.seen[i] = True
+    def unseen_query_term(self):
+        unseen_list
+        for i in range (0,n):
+            if !seen[i]:
+                unseen_list.add(i)
+                unseen_list.append(i)
+        return unseen_list
