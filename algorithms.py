@@ -1,7 +1,7 @@
 import pprint
 import copy
 from document import Document
-
+MININT = -10000000
 class Algorithm:
 
     def __init__(self, vocabulary_set, posting_lists_all):
@@ -26,9 +26,9 @@ class Algorithm:
 
 class NaiveAlgorithm(Algorithm):
 
-    def search(self, k, query_list):
+    def search(self,k, query_list):
         posting_list = self.load_documents(query_list)
-        pprint.pprint(posting_list)
+        # pprint.pprint(posting_list)
         return self.naive_algorithm(query_list, posting_list)
 
     def naive_algorithm(self, query_list, posting_list):
@@ -42,21 +42,26 @@ class NaiveAlgorithm(Algorithm):
 
         for documents_with_score in posting_list :
             documents_with_score.sort(key=lambda doc: int(doc.doc), reverse=False)
-        pprint.pprint(posting_list)
+        # pprint.pprint(posting_list) #https://www.quora.com/What-does-n-do-in-python
 
         # set cursor for parallel scan
-        for i in (0, query_size-1):
+        for i in range(query_size):
             list_iterator.append(iter(posting_list[i]))
         # algorithm start here
         while not end_of_file:
-            for i in (0, query_size-1):
+            for i in range(query_size):
                 value = next(list_iterator[i], None)
                 # if (value.doc < maxDoc): change to while
                 # move until doc >= maxDoc
+                # print(value)
+                if value is None:
+                    end_of_file = True
+                    break
                 while( int(value.doc) < maxDoc ):
                     value = next(list_iterator[i], None)
                     # end of list not handled todo handle it!!!!! edit should be handled
-                    if value == None:
+                    # print(value)
+                    if value is None:
                         end_of_file = True
                         break
                 # need improvement
@@ -65,19 +70,21 @@ class NaiveAlgorithm(Algorithm):
 
                 if int(value.doc) == maxDoc:
                     if seen == query_size-1:
-                        document_to_display.append(Document(str(maxDoc), score/query_size))
+                        document_to_display.append(Document(str(maxDoc), (score+value.score)/query_size))
                         # to do handle end of list edit done
-                        value = next(list_iterator[i], None)
-                        if value == None:
-                            end_of_file = True #end of file migth be useless because of break
-                            break
                     else:
                         seen += 1
                         score += value.score
                 if int(value.doc) > maxDoc:
                     maxDoc = int(value.doc)
-                    score = value.score
-                    seen = 1
+
+                    if query_size == 1 :
+                        document_to_display.append(Document(str(maxDoc), value.score))
+                        # to do handle end of list edit done
+
+                    else :
+                        score = value.score
+                        seen = 1
 
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
         return document_to_display
@@ -114,28 +121,35 @@ class FaginsThreshold_Algorithm(Algorithm):
 # slide dans le dossier note page 20
 # 1
         C = {}
-        tau = 100000
-        mu_min = 100001
+        tau = 100001
+        mu_min = 100000
         doc_seen_for_each_qt = {}
         pointers = [0] * len(word_list)
         for documents_with_score in posting_list :
             documents_with_score.sort(key=lambda doc: doc.score, reverse=True)
+        # pprint.pprint(posting_list)
 # 2
-        while ( len(C) < k or (tau == 100000 and tau > mu_min and tau != 100000)) :
+        flag_end = False
+        while ((len(C) < k or tau > mu_min) and not flag_end ) :
 # 2.1
+            # print(tau,mu_min)
             max_score = -200000
             scores = []
             d = ""
-            index_pl = 0
+            index_pl = -1
+            word_index_pl = -1
             for documents_with_score in posting_list :
+                index_pl += 1
                 pt = pointers[index_pl]
-                if documents_with_score[pt].score > max_score :
+                if pt >= len(documents_with_score) :
+                    flag_end = True
+                elif documents_with_score[pt].score > max_score :
                     max_score = documents_with_score[pt].score
                     d = documents_with_score[pt].doc
                     word_index_pl = index_pl
-                index_pl += 1
 
 # 2.1.1
+            is_found_eachdoc = True
             for documents_with_score in posting_list:
                 found = False
                 for document_found in documents_with_score :
@@ -144,8 +158,13 @@ class FaginsThreshold_Algorithm(Algorithm):
                         found = True
                         break
                 if not found :
-                    scores.append(-10000)
-            mu = sum(scores) / float(len(scores))
+                    is_found_eachdoc = False
+            if is_found_eachdoc:
+                mu = sum(scores) / float(len(scores))
+            else :
+                mu = MININT
+
+            # print (d,mu,pointers[0],pointers[1])
 # 2.1.2
             if len(C) < k :
                 C[d] = mu
@@ -158,6 +177,7 @@ class FaginsThreshold_Algorithm(Algorithm):
                 for (name,score) in C.items():
                     if mu_min == score:
                         del C[name]
+                        break
                 C[d] = mu
                 mu_min = mu
                 for score in C.values():
@@ -165,9 +185,11 @@ class FaginsThreshold_Algorithm(Algorithm):
                         mu_min = score
 # faire avancer les pointeurs
             index_pl = 0
+            if word_index_pl != -1 :
+                pointers[word_index_pl] += 1
             for documents_with_score in posting_list:
                 pt = pointers[index_pl]
-                while pt < len(documents_with_score) and documents_with_score[pt].doc in C :
+                while (pt < len(documents_with_score)) and (documents_with_score[pt].doc in C) :
                     pt += 1
                 pointers[index_pl] = pt
                 index_pl += 1
@@ -182,8 +204,9 @@ class FaginsThreshold_Algorithm(Algorithm):
 # 3
         document_to_display = []
         for d, mu in C.items() :
-            document_to_display.append((d,mu))
-        document_to_display.sort(key=lambda data: data[1], reverse=True)
+            if mu > 0 :
+                document_to_display.append(Document(d,mu))
+        document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
         return document_to_display
 
 class FaginAlgorithm(Algorithm):

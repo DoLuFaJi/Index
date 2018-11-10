@@ -3,6 +3,7 @@ import pprint
 import resource
 import mmap
 import pickle
+
 from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, DATAFOLDER_ALGO, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
 
 from processing import Tokenization, Scoring
@@ -10,6 +11,7 @@ from algorithms import NaiveAlgorithm
 from algorithms import FaginAlgorithm
 from algorithms import FaginsThreshold_Algorithm
 from document import Document
+from htmlwriter import HtmlWriter
 
 import nltk
 from nltk.stem import *
@@ -48,7 +50,46 @@ def flush_on_disk(inverted_file, posting_lists):
     pickle.dump(inverted_file, open('if.p', 'wb'))
     posting_lists.flush()
 
+def input_N_topN(algo_op):
+    N = -1
+    while (not algo_op == 0) and True:
+        try :
+            N = int(input('Top ?  (the X of the TopX results ) :'))
+            if N > 0 :
+                break
+        except :
+            print ("Enter an integer plz")
+    return N
 
+def input_terms():
+    print("Enter terms one by one, line by line and end by 'E' : ")
+    terms = []
+    x = input('')
+    while not x == "E" :
+        terms.append(x)
+        x = input('')
+    return terms
+
+def input_choose_algo():
+    while True :
+        try:
+            algo_op = int(input("0 pour Naive, 1 pour Fagin, 2 pour FaginsThreshold\n"))
+            if algo_op in [0,1,2] :
+                break
+            else :
+                print ("0 or 1 or 2 plz")
+        except :
+            print ("0 or 1 or 2 plz")
+    return algo_op
+
+def calculate(algo_op,N,terms):
+    if algo_op == 0 :
+        ans = algoN.search(N,terms)
+    elif algo_op == 1 :
+        ans = algoF.search(N,terms)
+    elif algo_op == 2 :
+        ans = algoFT.search(N,terms)
+    return ans
 # limit RAM here.
 # resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024, RAM_LIMIT_MB*1024))
 file = open(MMAP_FILE, 'wb')
@@ -106,41 +147,20 @@ try:
         algoF = FaginAlgorithm(vocabulary_set,posting_lists)
         algoN = NaiveAlgorithm(vocabulary_set,posting_lists)
         algoFT = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
-        while True:
-            try :
-                N = int(input('Top ? (-1 to end the search) :'))
-                if N > -2 :
-                    break
-            except :
-                print ("Enter an integer plz")
-        while not N == -1 :
-            print("Enter terms one by one, line by line and end by 'E' : ")
-            terms = []
-            x = input('')
-            while not x == "E" :
-                terms.append(x)
-                x = input('')
+        while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
+            algo_op = input_choose_algo()
+            N = input_N_topN(algo_op)
+            terms = input_terms()
+            print(terms)
+            ans = calculate(algo_op,N,terms)
+            print("-------------ans--------------")
+            pprint.pprint(ans)
+            print("-------------ans--------------")
+            # html = HtmlWriter()
+            # terms_string = ''.join(terms)
+            # print("---"+terms_string+"---")
+            # html.writeHTMLresponse(terms_string,ans)
 
-            while True :
-                algo_op = int(input("0 pour Naive, 1 pour Fagin, 2 pour FaginsThreshold\n"))
-                if algo_op == 0 :
-                    pprint.pprint(algoN.search(N,terms))
-                    break
-                elif algo_op == 1 :
-                    pprint.pprint(algoF.search(N,terms))
-                    break
-                elif algo_op == 2 :
-                    pprint.pprint(algoFT.search(N,terms))
-                    break
-                else :
-                    print ("0 or 1 or 2 plz")
-            while True:
-                try :
-                    N = int(input('Top ? (-1 to end the search) :'))
-                    if N > -2 :
-                        break
-                except :
-                    print ("Enter an integer plz")
 
 except MemoryError:
     flush_on_disk(vocabulary_set, posting_lists)
