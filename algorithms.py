@@ -1,6 +1,7 @@
 import pprint
 import copy
 from document import Document
+from settings import EPSILON
 MININT = -10000000
 class Algorithm:
 
@@ -208,6 +209,106 @@ class FaginsThreshold_Algorithm(Algorithm):
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
         return document_to_display
+
+
+class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
+
+    def search(self,k,word_list):
+        posting_list = self.load_documents(word_list)
+        return self.faginsThreshold_algorithm(k,word_list, posting_list)
+    def faginsThreshold_algorithm(self,k,word_list,posting_list):
+
+# slide dans le dossier note page 20
+# 1
+        C = {}
+        tau = 100001
+        mu_min = 100000
+        doc_seen_for_each_qt = {}
+        pointers = [0] * len(word_list)
+        for documents_with_score in posting_list :
+            documents_with_score.sort(key=lambda doc: doc.score, reverse=True)
+        # pprint.pprint(posting_list)
+# 2
+        flag_end = False
+        while ((len(C) < k or tau / ( 1 + EPSILON ) > mu_min) and not flag_end ) :
+# 2.1
+            # print(tau,mu_min)
+            max_score = -200000
+            scores = []
+            d = ""
+            index_pl = -1
+            word_index_pl = -1
+            for documents_with_score in posting_list :
+                index_pl += 1
+                pt = pointers[index_pl]
+                if pt >= len(documents_with_score) :
+                    flag_end = True
+                elif documents_with_score[pt].score > max_score :
+                    max_score = documents_with_score[pt].score
+                    d = documents_with_score[pt].doc
+                    word_index_pl = index_pl
+
+# 2.1.1
+            is_found_eachdoc = True
+            for documents_with_score in posting_list:
+                found = False
+                for document_found in documents_with_score :
+                    if document_found.doc == d :
+                        scores.append(document_found.score)
+                        found = True
+                        break
+                if not found :
+                    is_found_eachdoc = False
+            if is_found_eachdoc:
+                mu = sum(scores) / float(len(scores))
+            else :
+                mu = MININT
+
+            # print (d,mu,pointers[0],pointers[1])
+# 2.1.2
+            if len(C) < k :
+                C[d] = mu
+                if len(C) == 1 :
+                    mu_min = mu
+                else :
+                    mu_min = min(mu,mu_min)
+# 2.1.3
+            elif mu_min < mu :
+                for (name,score) in C.items():
+                    if mu_min == score:
+                        del C[name]
+                        break
+                C[d] = mu
+                mu_min = mu
+                for score in C.values():
+                    if mu_min > score:
+                        mu_min = score
+# faire avancer les pointeurs
+            index_pl = 0
+            if word_index_pl != -1 :
+                pointers[word_index_pl] += 1
+            for documents_with_score in posting_list:
+                pt = pointers[index_pl]
+                while (pt < len(documents_with_score)) and (documents_with_score[pt].doc in C) :
+                    pt += 1
+                pointers[index_pl] = pt
+                index_pl += 1
+# 2.1.4
+            doc_seen_for_each_qt[word_index_pl] = 1
+            taus = []
+            if len(doc_seen_for_each_qt) == len(word_list) :
+                index_pl = 0
+                for documents_with_score in posting_list :
+                    taus.append(documents_with_score[pointers[index_pl]-1].score)
+                tau = sum(taus) / float(len(taus))
+# 3
+        document_to_display = []
+        for d, mu in C.items() :
+            if mu > 0 :
+                document_to_display.append(Document(d,mu))
+        document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
+        return document_to_display
+
 
 class FaginAlgorithm(Algorithm):
 

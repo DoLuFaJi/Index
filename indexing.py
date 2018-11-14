@@ -10,6 +10,7 @@ from processing import Tokenization, Scoring
 from algorithms import NaiveAlgorithm
 from algorithms import FaginAlgorithm
 from algorithms import FaginsThreshold_Algorithm
+from algorithms import FaginsThreshold_WithEpsilon_Algorithm
 from document import Document
 from htmlwriter import HtmlWriter
 
@@ -73,13 +74,13 @@ def input_terms():
 def input_choose_algo():
     while True :
         try:
-            algo_op = int(input("0 pour Naive, 1 pour Fagin, 2 pour FaginsThreshold\n"))
-            if algo_op in [0,1,2] :
+            algo_op = int(input("0 for Naive, 1 for Fagin, 2 for Fagins Threshold, 3 for Fagins Threshold With Epsilon\n"))
+            if algo_op in [0,1,2,3] :
                 break
             else :
-                print ("0 or 1 or 2 plz")
+                print ("0 or 1 or 2 or 3 plz")
         except :
-            print ("0 or 1 or 2 plz")
+            print ("0 or 1 or 2 or 3 plz")
     return algo_op
 
 def calculate(algo_op,N,terms):
@@ -89,6 +90,8 @@ def calculate(algo_op,N,terms):
         ans = algoF.search(N,terms)
     elif algo_op == 2 :
         ans = algoFT.search(N,terms)
+    elif algo_op == 3 :
+        ans = algoFTE.search(N,terms)
     return ans
 # limit RAM here.
 # resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024, RAM_LIMIT_MB*1024))
@@ -147,6 +150,7 @@ try:
         algoF = FaginAlgorithm(vocabulary_set,posting_lists)
         algoN = NaiveAlgorithm(vocabulary_set,posting_lists)
         algoFT = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
+        algoFTE = FaginsThreshold_WithEpsilon_Algorithm(vocabulary_set,posting_lists)
         while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
             algo_op = input_choose_algo()
             N = input_N_topN(algo_op)

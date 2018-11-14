@@ -12,3 +12,4 @@ INDEX_NAME = 'index.p'
 MMAP_FILE = 'mmap.txt'
 
 DEBUG = True
+EPSILON = 0.5
