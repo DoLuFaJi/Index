@@ -56,6 +56,7 @@ class InvertedFileBuilder:
                     #     print(doc + ' ' + str(frequency) + ' ' + str(self.posting_list.tell()) + ' ' + str(len(to_write)))
             filename_processed.add(filename)
             self.nb_documents += documents_processed
+            self.flush()
 
 
     def compute_idf(self):
@@ -116,11 +117,12 @@ class InvertedFileBuilder:
 
 
     def __getitem__(self, term):
+        if term not in self.inverted_file:
+            return []
         term_info = self.inverted_file[term]
         index, size, idf = term_info['index'], term_info['size'], term_info['idf']
         pl = []
         if term in self.cached_posting_list:
-            print('cache')
             pl = self.cached_posting_list[term]
         else:
             with open(PL_FILE, 'rb') as f:
@@ -140,17 +142,17 @@ class InvertedFileBuilder:
         return pl
 
 
-if LIMIT_RAM:
-    resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
-
-ifb = InvertedFileBuilder()
-try:
-    ifb.build_partial()
-except MemoryError:
-    print(resource.getrusage(resource.RUSAGE_SELF))
-    ifb.flush()
-ifb.flush()
-ifb.merge()
-
-from pprint import pprint as pp
-import pdb; pdb.set_trace()
+# if LIMIT_RAM:
+#     resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
+#
+# ifb = InvertedFileBuilder()
+# try:
+#     ifb.build_partial()
+# except MemoryError:
+#     print(resource.getrusage(resource.RUSAGE_SELF))
+#     ifb.flush()
+# ifb.flush()
+# ifb.merge()
+#
+# from pprint import pprint as pp
+# import pdb; pdb.set_trace()
