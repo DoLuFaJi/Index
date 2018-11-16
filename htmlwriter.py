@@ -1,5 +1,4 @@
 import os
-from settings import TEST_DATAFOLDER
 import re
 
 class HtmlWriter:
@@ -9,6 +8,8 @@ class HtmlWriter:
     #   html.writeHTMLresponse("hellohello", response)
     #       where hellohello is a string of the request from a user an response a list of Document
     #the created file is in ./test and its name is the request
+    def __init__(self, datafolder):
+        self.datafolder = datafolder
 
     def __write__(self, request, text):
         try:
@@ -39,11 +40,8 @@ class HtmlWriter:
         self.__write__(request, text)
 
     def footer(self, request):
-        print("mlfmskdsmlkfsdfkml*")
         text = """<p>END Response for request """+request+"""END</p></body></html><script>function showDiv(lala) {console.log(document.getElementById(lala).style.display);if(document.getElementById(lala).style.display === 'none'){document.getElementById(lala).style.display = "block";}else{document.getElementById(lala).style.display = "none";}}</script>"""
-        print("dfkmldjgdsklgjdfkmlgjdlkgjgklgkjl")
         self.__write__(request, text)
-        print("dsjkfdshkdfjhdfshkjlfshkldsjfhklsj")
 
     def addDocument(self, documentId, request, score):
         try:
@@ -53,28 +51,22 @@ class HtmlWriter:
             self.__write__(request, text)
             for line in docsinfile:
                 if str(","+documentId+",") in line:
-                    print(line)
                     filename = line[:line.find("=")]
                     text = """<p>FILE NAME : """+filename+"""</p>"""
-                    print(TEST_DATAFOLDER+filename)
-                    file = open (TEST_DATAFOLDER+filename, 'r')
-                    print("open")
+                    file = open (self.datafolder+filename, 'r')
                     doc_in_file = file.read().split("<DOC>")
-                    print("read")
                     del doc_in_file[0] #the first is empty
                     for doc in doc_in_file:
-                        print("yo")
                         docid = re.findall("<DOCID> (.*?) </DOCID>", doc)
-                        print("hello")
                         if len(docid)!=0:
                             docid = docid[0]
                             if docid == documentId:
-                                print(documentId)
                                 self.__write__(request, doc)
             text = "</div>"
             self.__write__(request, text)
 
-        except:
+        except Exception as e:
+            import pdb; pdb.set_trace()
             print("Error: can\'t find file - adddocument")
 
     def writeHTMLresponse(self, request, response):
@@ -83,6 +75,7 @@ class HtmlWriter:
         for r in response:
             self.addDocument(str(r.name), request, str(r.score))
         self.footer(request)
+        print("""Generated file in './test/'"""+request)
 #
 # from document import Document
 #

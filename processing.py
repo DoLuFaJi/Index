@@ -14,9 +14,9 @@ import os
 
 class Tokenization:
 
-    def tokenization(self, file_name, remove_tags=True, remove_stopwords=True, stemming=False):
+    def tokenization(self, file_name, datafolder, remove_tags=True, remove_stopwords=True, stemming=False):
         #This method takes the name of the file and return the list of word inside it
-        file = open(TEST_DATAFOLDER+file_name, "r")
+        file = open(datafolder+file_name, "r")
 
         #separate the document
         doc_in_file = file.read().split("<DOC>")
