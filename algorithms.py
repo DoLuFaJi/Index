@@ -28,7 +28,6 @@ class Algorithm:
 class NaiveAlgorithm(Algorithm):
     def search(self,k, query_list):
         posting_list = self.load_documents(query_list)
-        # pprint.pprint(posting_list)
         return self.naive_algorithm(query_list, posting_list)
 
     def naive_algorithm(self, query_list, posting_list):
@@ -316,7 +315,7 @@ class FaginAlgorithm(Algorithm):
         pprint.pprint(posting_list)
         posting_list_sorted_by_score = self.sort_posting_list(posting_list)
         posting_list_sorted = self.create_dictionary_from_posting_list(posting_list,len(query_list))
-        return self.fagin_algorithm(query_list, posting_list_sorted, posting_list, k)
+        return self.fagin_algorithm(query_list, posting_list_sorted, posting_list_sorted_by_score, k)
 
     def sort_posting_list(self, posting_list):
         posting_list_sorted = copy.deepcopy(posting_list) # check if it works or not
@@ -341,34 +340,41 @@ class FaginAlgorithm(Algorithm):
 
         exit_condition = False
         #Fagin start
+        end_of_file = 0
         while exit_condition != True: # |C|=k or end of file
             for i in (0, n-1):
                 # work here
                 document = next(list_iterator[i], None)
                 if document == None:
+                    end_of_file = end_of_file + 1
+                    pprint.pprint(end_of_file)
+                    if end_of_file == n:
+                        exit_condition = True
                     break
-                if document not in selected_document:
-                    selected_document[document] = AgregateAvg(document[1], document[0], i, n)
+                test = selected_document.get(document[0], None)
+                if test == None:
+                    selected_document[document[0]] = AgregateAvg(document[1], document[0], i, n)
+                    test = selected_document.get(document[0], None)
                 else:
-                    selected_document[document].updateAvg(document[1], i)
-                    if selected_document[document].n == n:
-                        document_to_display.append(selected_document[document])
-                        del selected_document[document]
-                        if len(document_to_display) >= k:
-                            exit_condition = True
-                            break
-        for document in selected_document:
+                    selected_document[document[0]].updateAvg(document[1], i)
+                if selected_document[document[0]].n == n: # also check when n = 1
+                    document_to_display.append((selected_document[document[0]].document, selected_document[document[0]].value))
+                    del selected_document[document[0]]
+                    if len(document_to_display) >= k:
+                        exit_condition = True
+                        break
+        for key, document in selected_document.items():
             can_be_added = True
             query_term_to_see = document.unseen_query_term()
             for query_term in query_term_to_see:
-                found_document = posting_list[i].get(document.document, None)
+                found_document = posting_list_sorted[i].get(document.document, None)
                 if found_document == None: # if doc not found
                     can_be_added = False
                     break
                 score = found_document[1]
                 document.updateAvg(score, i)
             if can_be_added:
-                document_to_display.append(selected_document[document])
+                document_to_display.append((selected_document[key].document, selected_document[key].value))
             # no need to remove from selected document
         document_to_display.sort(key=lambda doc: doc[1], reverse=True)
         return document_to_display[:k]
@@ -379,23 +385,23 @@ class AgregateAvg:
         self.sum_value = first_value
         self.n = 1
         self.document = document # useless ! edit finaly it's useful
-        pprint.pprint(size)
         self.seen = [False] * size # initalize
-        pprint.pprint(self.seen)
         self.seen[i] = True # seen by the query term i
+        self.value = self.sum_value / self.n
 
     def __repr__(self):
         return self.document
 
     def updateAvg(self, value_to_add, i):
         self.sum_value += value_to_add
-        self.n += 1
+        self.n = 1 + self.n
+        pprint.pprint(self.n)
         self.value = self.sum_value / self.n
         self.seen[i] = True
     def unseen_query_term(self):
-        unseen_list
+        unseen_list = []
+        n = len(self.seen)
         for i in range (0,n-1):
-            if seen[i] != True:
-                unseen_list.add(i)
+            if self.seen[i] != True:
                 unseen_list.append(i)
         return unseen_list
