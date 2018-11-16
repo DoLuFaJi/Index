@@ -1,14 +1,12 @@
 import pprint
+import argparse
 
 from interface import input_terms, input_N_topN, input_choose_algo
 from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm
 from indexing import InvertedFileBuilder
+from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE
 
-inverted_file = InvertedFileBuilder()
-inverted_file.build_partial()
-inverted_file.merge()
-
-def calculate(algo_op,N,terms):
+def calculate(algo_op, N, terms):
     if algo_op == 0 :
         ans = algoN.search(N,terms)
     elif algo_op == 1 :
@@ -19,6 +17,28 @@ def calculate(algo_op,N,terms):
         ans = algoFTE.search(N,terms)
     return ans
 
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument('-d', '--datafolder', help='Choose datafolder', type=str)
+arg_parser.add_argument('-n', '--name', help='Choose filename', type=str)
+arg_parser.add_argument('-m', '--map', help='Map id term, set to load an index', type=str)
+
+datafolder = DATAFOLDER
+filename = PL_FILE
+map = ''
+args = arg_parser.parse_args()
+if args.datafolder is not None:
+    datafolder = args.datafolder
+    if datafolder is 't':
+        datafolder = TEST_DATAFOLDER
+if args.name is not None:
+    filename = args.name
+if args.map is not None:
+    map = args.map
+
+inverted_file = InvertedFileBuilder(datafolder, filename, map)
+inverted_file.build_partial()
+inverted_file.merge()
+inverted_file.save()
 
 algoF = FaginAlgorithm(inverted_file)
 algoN = NaiveAlgorithm(inverted_file)
