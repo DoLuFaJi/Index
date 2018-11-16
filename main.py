@@ -4,6 +4,8 @@ from interface import input_terms, input_N_topN, input_choose_algo
 from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm
 from indexing import InvertedFileBuilder
 
+from htmlwriter import HtmlWriter
+
 inverted_file = InvertedFileBuilder()
 inverted_file.build_partial()
 inverted_file.merge()
@@ -24,6 +26,8 @@ algoF = FaginAlgorithm(inverted_file)
 algoN = NaiveAlgorithm(inverted_file)
 algoFT = FaginsThreshold_Algorithm(inverted_file)
 algoFTE = FaginsThreshold_WithEpsilon_Algorithm(inverted_file)
+
+html = HtmlWriter()
 while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
     algo_op = input_choose_algo()
     N = input_N_topN(algo_op)
@@ -32,5 +36,6 @@ while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'
     ans = calculate(algo_op,N,terms)
     print("-------------ans--------------")
     # import pdb; pdb.set_trace()
+    html.writeHTMLresponse(str(terms), ans)
     pprint.pprint(ans)
     print("-------------ans--------------")
