@@ -2,6 +2,7 @@
 
 DATAFOLDER = "./data/latimes/"
 TEST_DATAFOLDER = "./data/test/"
+DATAFOLDER_ALGO = "./data/test_algo/"
 
 LIMIT_RAM = False
 DEFAULT_PYTHON_SIZE_MB = 450
@@ -13,6 +14,7 @@ INDEX_NAME = 'index.p'
 MMAP_FILE = 'mmap.txt'
 
 DEBUG = False
+EPSILON = 0.5
 
 INVERTED_FILE = 'inverted_file_part'
 PL_FILE = 'pl_file_part'
