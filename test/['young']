@@ -3,7 +3,7 @@
         <html>
         <body>
         <h1>Index Dolufaji</h1>
-        <p>Response for request ['young']</p><input type="button" value=173 onclick="showDiv(173)"/><div id=173  style="display:none;" ><p>DOC ID : 173 with score = 5.5828639605826105</p>
+        <p>Response for request ['young']</p><input type="button" value=173 onclick="showDiv(173)"/><div id=173  style="display:none;" ><p>DOC ID : 173 with score = 5.206963425791125</p>
 <DOCNO> LA010189-0071 </DOCNO>
 <DOCID> 173 </DOCID>
 <DATE>
@@ -1108,7 +1108,7 @@ Wire
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=123 onclick="showDiv(123)"/><div id=123  style="display:none;" ><p>DOC ID : 123 with score = 4.466291168466088</p>
+</div><input type="button" value=123 onclick="showDiv(123)"/><div id=123  style="display:none;" ><p>DOC ID : 123 with score = 4.1655707406329</p>
 <DOCNO> LA010189-0051 </DOCNO>
 <DOCID> 123 </DOCID>
 <DATE>
@@ -1433,7 +1433,7 @@ Press International
 </P>
 </GRAPHIC>
 </DOC>
-</div><input type="button" value=22 onclick="showDiv(22)"/><div id=22  style="display:none;" ><p>DOC ID : 22 with score = 3.349718376349566</p>
+</div><input type="button" value=22 onclick="showDiv(22)"/><div id=22  style="display:none;" ><p>DOC ID : 22 with score = 3.1241780554746748</p>
 <DOCNO> LA010189-0010 </DOCNO>
 <DOCID> 22 </DOCID>
 <DATE>
@@ -1570,7 +1570,7 @@ Column; Motion Picture Review
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=202 onclick="showDiv(202)"/><div id=202  style="display:none;" ><p>DOC ID : 202 with score = 2.233145584233044</p>
+</div><input type="button" value=202 onclick="showDiv(202)"/><div id=202  style="display:none;" ><p>DOC ID : 202 with score = 2.08278537031645</p>
 <DOCNO> LA010189-0082 </DOCNO>
 <DOCID> 202 </DOCID>
 <DATE>
@@ -1751,7 +1751,7 @@ Wire
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=243 onclick="showDiv(243)"/><div id=243  style="display:none;" ><p>DOC ID : 243 with score = 2.233145584233044</p>
+</div><input type="button" value=243 onclick="showDiv(243)"/><div id=243  style="display:none;" ><p>DOC ID : 243 with score = 2.08278537031645</p>
 <DOCNO> LA010189-0099 </DOCNO>
 <DOCID> 243 </DOCID>
 <DATE>
@@ -1862,7 +1862,7 @@ LOS ANGELES COUNTY; GANGS -- LOS ANGELES COUNTY
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=251 onclick="showDiv(251)"/><div id=251  style="display:none;" ><p>DOC ID : 251 with score = 2.233145584233044</p>
+</div><input type="button" value=251 onclick="showDiv(251)"/><div id=251  style="display:none;" ><p>DOC ID : 251 with score = 2.08278537031645</p>
 <DOCNO> LA010189-0101 </DOCNO>
 <DOCID> 251 </DOCID>
 <DATE>
@@ -2132,7 +2132,7 @@ List; Poll or Survey
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=253 onclick="showDiv(253)"/><div id=253  style="display:none;" ><p>DOC ID : 253 with score = 2.233145584233044</p>
+</div><input type="button" value=253 onclick="showDiv(253)"/><div id=253  style="display:none;" ><p>DOC ID : 253 with score = 2.08278537031645</p>
 <DOCNO> LA010189-0103 </DOCNO>
 <DOCID> 253 </DOCID>
 <DATE>
@@ -2340,7 +2340,7 @@ in Baker's "Don't Go Back to Rockville." ELLEN JASKOL / L.A. Times
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=402 onclick="showDiv(402)"/><div id=402  style="display:none;" ><p>DOC ID : 402 with score = 2.233145584233044</p>
+</div><input type="button" value=402 onclick="showDiv(402)"/><div id=402  style="display:none;" ><p>DOC ID : 402 with score = 2.08278537031645</p>
 <DOCNO> LA010189-0162 </DOCNO>
 <DOCID> 402 </DOCID>
 <DATE>
@@ -2504,7 +2504,7 @@ four years in a row. BORIS YARO / Los Angeles Times
 </P>
 </GRAPHIC>
 </DOC>
-</div><input type="button" value=83342 onclick="showDiv(83342)"/><div id=83342  style="display:none;" ><p>DOC ID : 83342 with score = 2.233145584233044</p>
+</div><input type="button" value=83342 onclick="showDiv(83342)"/><div id=83342  style="display:none;" ><p>DOC ID : 83342 with score = 2.08278537031645</p>
 <DOCNO> LA071789-0081 </DOCNO>
 <DOCID> 83342 </DOCID>
 <DATE>
@@ -2851,7 +2851,7 @@ OIL INDUSTRY; ENTREPRENEURS
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=2 onclick="showDiv(2)"/><div id=2  style="display:none;" ><p>DOC ID : 2 with score = 1.116572792116522</p>
+</div><input type="button" value=2 onclick="showDiv(2)"/><div id=2  style="display:none;" ><p>DOC ID : 2 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0002 </DOCNO>
 <DOCID> 2 </DOCID>
 <DATE>
@@ -3018,7 +3018,7 @@ Book Review
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=3 onclick="showDiv(3)"/><div id=3  style="display:none;" ><p>DOC ID : 3 with score = 1.116572792116522</p>
+</div><input type="button" value=3 onclick="showDiv(3)"/><div id=3  style="display:none;" ><p>DOC ID : 3 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0003 </DOCNO>
 <DOCID> 3 </DOCID>
 <DATE>
@@ -3179,7 +3179,7 @@ Book Review
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=41 onclick="showDiv(41)"/><div id=41  style="display:none;" ><p>DOC ID : 41 with score = 1.116572792116522</p>
+</div><input type="button" value=41 onclick="showDiv(41)"/><div id=41  style="display:none;" ><p>DOC ID : 41 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0017 </DOCNO>
 <DOCID> 41 </DOCID>
 <DATE>
@@ -3238,7 +3238,7 @@ Column
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=53 onclick="showDiv(53)"/><div id=53  style="display:none;" ><p>DOC ID : 53 with score = 1.116572792116522</p>
+</div><input type="button" value=53 onclick="showDiv(53)"/><div id=53  style="display:none;" ><p>DOC ID : 53 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0023 </DOCNO>
 <DOCID> 53 </DOCID>
 <DATE>
@@ -3291,7 +3291,7 @@ Letter to the Editor
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=74 onclick="showDiv(74)"/><div id=74  style="display:none;" ><p>DOC ID : 74 with score = 1.116572792116522</p>
+</div><input type="button" value=74 onclick="showDiv(74)"/><div id=74  style="display:none;" ><p>DOC ID : 74 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0032 </DOCNO>
 <DOCID> 74 </DOCID>
 <DATE>
@@ -3499,7 +3499,7 @@ Drawing, JILL BANASHEK / for The Times
 </P>
 </GRAPHIC>
 </DOC>
-</div><input type="button" value=102 onclick="showDiv(102)"/><div id=102  style="display:none;" ><p>DOC ID : 102 with score = 1.116572792116522</p>
+</div><input type="button" value=102 onclick="showDiv(102)"/><div id=102  style="display:none;" ><p>DOC ID : 102 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0042 </DOCNO>
 <DOCID> 102 </DOCID>
 <DATE>
@@ -3551,7 +3551,7 @@ Letter to the Editor
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=181 onclick="showDiv(181)"/><div id=181  style="display:none;" ><p>DOC ID : 181 with score = 1.116572792116522</p>
+</div><input type="button" value=181 onclick="showDiv(181)"/><div id=181  style="display:none;" ><p>DOC ID : 181 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0073 </DOCNO>
 <DOCID> 181 </DOCID>
 <DATE>
@@ -3702,7 +3702,7 @@ Wire
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=191 onclick="showDiv(191)"/><div id=191  style="display:none;" ><p>DOC ID : 191 with score = 1.116572792116522</p>
+</div><input type="button" value=191 onclick="showDiv(191)"/><div id=191  style="display:none;" ><p>DOC ID : 191 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0077 </DOCNO>
 <DOCID> 191 </DOCID>
 <DATE>
@@ -3849,7 +3849,7 @@ drop of a little lime juice -- they taste, well, like a mushroom.
 </P>
 </TEXT>
 </DOC>
-</div><input type="button" value=211 onclick="showDiv(211)"/><div id=211  style="display:none;" ><p>DOC ID : 211 with score = 1.116572792116522</p>
+</div><input type="button" value=211 onclick="showDiv(211)"/><div id=211  style="display:none;" ><p>DOC ID : 211 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0085 </DOCNO>
 <DOCID> 211 </DOCID>
 <DATE>
@@ -3909,7 +3909,7 @@ Obituary; Wire
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=214 onclick="showDiv(214)"/><div id=214  style="display:none;" ><p>DOC ID : 214 with score = 1.116572792116522</p>
+</div><input type="button" value=214 onclick="showDiv(214)"/><div id=214  style="display:none;" ><p>DOC ID : 214 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0088 </DOCNO>
 <DOCID> 214 </DOCID>
 <DATE>
@@ -4262,7 +4262,7 @@ HUDSON CORP; BROADWAY SOUTHERN CALIFORNIA (COMPANY)
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=241 onclick="showDiv(241)"/><div id=241  style="display:none;" ><p>DOC ID : 241 with score = 1.116572792116522</p>
+</div><input type="button" value=241 onclick="showDiv(241)"/><div id=241  style="display:none;" ><p>DOC ID : 241 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0097 </DOCNO>
 <DOCID> 241 </DOCID>
 <DATE>
@@ -4664,7 +4664,7 @@ CULTURE; LOS ANGELES -- POPULATION
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=272 onclick="showDiv(272)"/><div id=272  style="display:none;" ><p>DOC ID : 272 with score = 1.116572792116522</p>
+</div><input type="button" value=272 onclick="showDiv(272)"/><div id=272  style="display:none;" ><p>DOC ID : 272 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0110 </DOCNO>
 <DOCID> 272 </DOCID>
 <DATE>
@@ -4998,7 +4998,7 @@ RIGHTS -- CHINA; CAMBODIA -- FOREIGN RELATIONS -- CHINA
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=304 onclick="showDiv(304)"/><div id=304  style="display:none;" ><p>DOC ID : 304 with score = 1.116572792116522</p>
+</div><input type="button" value=304 onclick="showDiv(304)"/><div id=304  style="display:none;" ><p>DOC ID : 304 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0124 </DOCNO>
 <DOCID> 304 </DOCID>
 <DATE>
@@ -5091,7 +5091,7 @@ RAILROAD ACCIDENTS -- SOUTHERN CALIFORNIA; GAMES
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=342 onclick="showDiv(342)"/><div id=342  style="display:none;" ><p>DOC ID : 342 with score = 1.116572792116522</p>
+</div><input type="button" value=342 onclick="showDiv(342)"/><div id=342  style="display:none;" ><p>DOC ID : 342 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0138 </DOCNO>
 <DOCID> 342 </DOCID>
 <DATE>
@@ -5431,7 +5431,7 @@ Profile
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=363 onclick="showDiv(363)"/><div id=363  style="display:none;" ><p>DOC ID : 363 with score = 1.116572792116522</p>
+</div><input type="button" value=363 onclick="showDiv(363)"/><div id=363  style="display:none;" ><p>DOC ID : 363 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0147 </DOCNO>
 <DOCID> 363 </DOCID>
 <DATE>
@@ -5569,7 +5569,7 @@ Game Story
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=371 onclick="showDiv(371)"/><div id=371  style="display:none;" ><p>DOC ID : 371 with score = 1.116572792116522</p>
+</div><input type="button" value=371 onclick="showDiv(371)"/><div id=371  style="display:none;" ><p>DOC ID : 371 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0149 </DOCNO>
 <DOCID> 371 </DOCID>
 <DATE>
@@ -5767,7 +5767,7 @@ CHAMPIONSHIPS
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=401 onclick="showDiv(401)"/><div id=401  style="display:none;" ><p>DOC ID : 401 with score = 1.116572792116522</p>
+</div><input type="button" value=401 onclick="showDiv(401)"/><div id=401  style="display:none;" ><p>DOC ID : 401 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0161 </DOCNO>
 <DOCID> 401 </DOCID>
 <DATE>
@@ -6018,7 +6018,7 @@ Photo, Harry Welch
 </P>
 </GRAPHIC>
 </DOC>
-</div><input type="button" value=673 onclick="showDiv(673)"/><div id=673  style="display:none;" ><p>DOC ID : 673 with score = 1.116572792116522</p>
+</div><input type="button" value=673 onclick="showDiv(673)"/><div id=673  style="display:none;" ><p>DOC ID : 673 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0177 </DOCNO>
 <DOCID> 673 </DOCID>
 <DATE>
@@ -6290,7 +6290,7 @@ $60,000 and placed on 3 years' probation.
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=703 onclick="showDiv(703)"/><div id=703  style="display:none;" ><p>DOC ID : 703 with score = 1.116572792116522</p>
+</div><input type="button" value=703 onclick="showDiv(703)"/><div id=703  style="display:none;" ><p>DOC ID : 703 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0189 </DOCNO>
 <DOCID> 703 </DOCID>
 <DATE>
@@ -6353,7 +6353,7 @@ Opinion
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=704 onclick="showDiv(704)"/><div id=704  style="display:none;" ><p>DOC ID : 704 with score = 1.116572792116522</p>
+</div><input type="button" value=704 onclick="showDiv(704)"/><div id=704  style="display:none;" ><p>DOC ID : 704 with score = 1.041392685158225</p>
 <DOCNO> LA010189-0190 </DOCNO>
 <DOCID> 704 </DOCID>
 <DATE>
@@ -6674,7 +6674,7 @@ Associated Press
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=83094 onclick="showDiv(83094)"/><div id=83094  style="display:none;" ><p>DOC ID : 83094 with score = 1.116572792116522</p>
+</div><input type="button" value=83094 onclick="showDiv(83094)"/><div id=83094  style="display:none;" ><p>DOC ID : 83094 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0012 </DOCNO>
 <DOCID> 83094 </DOCID>
 <DATE>
@@ -6732,7 +6732,7 @@ into the custody of their parents, Sutton said.
 </P>
 </TEXT>
 </DOC>
-</div><input type="button" value=83113 onclick="showDiv(83113)"/><div id=83113  style="display:none;" ><p>DOC ID : 83113 with score = 1.116572792116522</p>
+</div><input type="button" value=83113 onclick="showDiv(83113)"/><div id=83113  style="display:none;" ><p>DOC ID : 83113 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0019 </DOCNO>
 <DOCID> 83113 </DOCID>
 <DATE>
@@ -6842,7 +6842,7 @@ Column
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=83114 onclick="showDiv(83114)"/><div id=83114  style="display:none;" ><p>DOC ID : 83114 with score = 1.116572792116522</p>
+</div><input type="button" value=83114 onclick="showDiv(83114)"/><div id=83114  style="display:none;" ><p>DOC ID : 83114 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0020 </DOCNO>
 <DOCID> 83114 </DOCID>
 <DATE>
@@ -6968,7 +6968,7 @@ Book Review
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=83121 onclick="showDiv(83121)"/><div id=83121  style="display:none;" ><p>DOC ID : 83121 with score = 1.116572792116522</p>
+</div><input type="button" value=83121 onclick="showDiv(83121)"/><div id=83121  style="display:none;" ><p>DOC ID : 83121 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0021 </DOCNO>
 <DOCID> 83121 </DOCID>
 <DATE>
@@ -7170,7 +7170,7 @@ Column
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=83133 onclick="showDiv(83133)"/><div id=83133  style="display:none;" ><p>DOC ID : 83133 with score = 1.116572792116522</p>
+</div><input type="button" value=83133 onclick="showDiv(83133)"/><div id=83133  style="display:none;" ><p>DOC ID : 83133 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0027 </DOCNO>
 <DOCID> 83133 </DOCID>
 <DATE>
@@ -7235,7 +7235,7 @@ Concert Review
 </P>
 </TYPE>
 </DOC>
-</div><input type="button" value=83183 onclick="showDiv(83183)"/><div id=83183  style="display:none;" ><p>DOC ID : 83183 with score = 1.116572792116522</p>
+</div><input type="button" value=83183 onclick="showDiv(83183)"/><div id=83183  style="display:none;" ><p>DOC ID : 83183 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0047 </DOCNO>
 <DOCID> 83183 </DOCID>
 <DATE>
@@ -7355,7 +7355,7 @@ ATHLETIC TEAMS
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=83322 onclick="showDiv(83322)"/><div id=83322  style="display:none;" ><p>DOC ID : 83322 with score = 1.116572792116522</p>
+</div><input type="button" value=83322 onclick="showDiv(83322)"/><div id=83322  style="display:none;" ><p>DOC ID : 83322 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0073 </DOCNO>
 <DOCID> 83322 </DOCID>
 <DATE>
@@ -7598,7 +7598,7 @@ ORANGE COUNTY; EVICTIONS
 </P>
 </SUBJECT>
 </DOC>
-</div><input type="button" value=83332 onclick="showDiv(83332)"/><div id=83332  style="display:none;" ><p>DOC ID : 83332 with score = 1.116572792116522</p>
+</div><input type="button" value=83332 onclick="showDiv(83332)"/><div id=83332  style="display:none;" ><p>DOC ID : 83332 with score = 1.041392685158225</p>
 <DOCNO> LA071789-0077 </DOCNO>
 <DOCID> 83332 </DOCID>
 <DATE>

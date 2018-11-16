@@ -73,7 +73,7 @@ class HtmlWriter:
         for r in response:
             self.addDocument(str(r.name), request, str(r.score))
         self.footer(request)
-        print("""Generated file in './test/'+request""")
+        print("""Generated file in './test/'"""+request)
 #
 # from document import Document
 #
