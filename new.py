@@ -16,30 +16,22 @@ STEP = 10*1024
 class InvertedFileBuilder:
     def __init__(self):
         self.inverted_file = {}
-        self.chunk_size = PL_FILE_RAM_LIMIT * 1024 * 1024
-        file_size = 5 * 1024 * 1024 * 1024
-        self.pl_file = open(PL_FILE, 'wb')
-        self.pl_file.seek(file_size - 1)
-        self.pl_file.write(b'\0')
-        self.pl_file.close()
 
-        self.pl_index = 0
-        self.list_files = set(os.listdir(DATAFOLDER))
+        self.list_files = set(os.listdir(TEST_DATAFOLDER))
         self.nb_documents = 0
         self.complete = False
         self.part = 0
 
-        self.pl_file = open(PL_FILE, 'r+b')
         self.__open_new_pl__()
+        self.cached_posting_list = {}
         self.map_term_id = {}
         self.map_id_term = {}
         self.term_id = 0
 
+
     def __open_new_pl__(self):
-        # self.posting_list = mmap.mmap(self.pl_file.fileno(), self.chunk_size, access=mmap.ACCESS_WRITE, offset=self.part*self.chunk_size)
-        # self.posting_list.write(b'stop')
-        # self.posting_list.seek(0)
         self.posting_list = []
+
 
     def build_partial(self):
         filename_processed = set()
@@ -65,6 +57,7 @@ class InvertedFileBuilder:
             filename_processed.add(filename)
             self.nb_documents += documents_processed
 
+
     def compute_idf(self):
         for term, info in self.inverted_file.items():
             index = info['index']
@@ -72,6 +65,7 @@ class InvertedFileBuilder:
             for i in range(len(self.posting_list[index])):
                 doc, frequency = self.posting_list[index][i]
                 self.posting_list[index][i] = (doc, frequency * idf_score)
+
 
     def flush(self):
         self.part += 1
@@ -81,8 +75,8 @@ class InvertedFileBuilder:
             pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
         pl_file.close()
         self.__open_new_pl__()
-
         print('Flushed pl to disk, part ' + str(self.part))
+
 
     def merge(self):
         self.inverted_file = {}
@@ -118,8 +112,37 @@ class InvertedFileBuilder:
         for term, info in self.inverted_file.items():
             self.inverted_file[term]['idf'] = idf(info['size'], self.nb_documents)
 
+        self.complete = True
+
+
+    def __getitem__(self, term):
+        term_info = self.inverted_file[term]
+        index, size, idf = term_info['index'], term_info['size'], term_info['idf']
+        pl = []
+        if term in self.cached_posting_list:
+            print('cache')
+            pl = self.cached_posting_list[term]
+        else:
+            with open(PL_FILE, 'rb') as f:
+                f.seek(index * 12)
+                end_pl = 12 * (index + size)
+                while not f.tell() >= end_pl:
+                    chunk = f.read(12)
+                    if chunk:
+                        docid, termid, frequency = unpack('III', chunk)
+                        if term == self.map_id_term[termid]:
+                            pl.append((docid, frequency * idf))
+                        else:
+                            print('going to far {} not {}'.format(self.map_id_term[termid], term))
+                    else:
+                        print('euuh')
+            self.cached_posting_list[term] = pl
+        return pl
+
+
 if LIMIT_RAM:
     resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
+
 ifb = InvertedFileBuilder()
 try:
     ifb.build_partial()
