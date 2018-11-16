@@ -46,7 +46,7 @@ algoN = NaiveAlgorithm(inverted_file)
 algoFT = FaginsThreshold_Algorithm(inverted_file)
 algoFTE = FaginsThreshold_WithEpsilon_Algorithm(inverted_file)
 
-html = HtmlWriter()
+html = HtmlWriter(datafolder)
 while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
     algo_op = input_choose_algo()
     N = input_N_topN(algo_op)
