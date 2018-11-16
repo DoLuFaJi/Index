@@ -2,7 +2,7 @@ import pprint
 
 from interface import input_terms, input_N_topN, input_choose_algo
 from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm
-from new import InvertedFileBuilder
+from indexing import InvertedFileBuilder
 
 inverted_file = InvertedFileBuilder()
 inverted_file.build_partial()

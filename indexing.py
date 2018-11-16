@@ -1,186 +1,158 @@
 import os
-import pprint
+import pickle
 import resource
 import mmap
-import numpy as np
-from numpy.lib.format import open_memmap
-import pickle
+import contextlib
+from heapq import merge
+from struct import pack, unpack
+from collections import Counter
 
-from settings import DATAFOLDER, RAM_LIMIT_MB, TEST_DATAFOLDER, SAVE_INDEX, INDEX_NAME, DEBUG, MMAP_FILE
-from processing import Tokenization, Scoring
-from algorithms import NaiveAlgorithm
-from algorithms import FaginAlgorithm
-from algorithms import FaginsThreshold_Algorithm
-from algorithms import FaginsThreshold_WithEpsilon_Algorithm
-from document import Document
-from htmlwriter import HtmlWriter
+from processing import Tokenization, idf
+from settings import DATAFOLDER, TEST_DATAFOLDER, INVERTED_FILE, PL_FILE, \
+LIMIT_RAM, RAM_LIMIT_MB, PL_FILE_RAM_LIMIT
 
-import nltk
-from nltk.stem import *
-from nltk.stem.porter import *
+STEP = 10*1024
 
-class Vocabulary:
-    def __init__(self, term):
-        self.term = term
-        self.posting_list_size = 0
+class InvertedFileBuilder:
+    def __init__(self):
+        self.inverted_file = {}
 
-    def __hash__(self):
-        return hash(self.term)
+        self.list_files = set(os.listdir(TEST_DATAFOLDER))
+        self.nb_documents = 0
+        self.complete = False
+        self.part = 0
 
-    def __eq__(self, other):
-        return self.term == other
-
-    def __str__(self):
-        return self.term
-
-    def __repr__(self):
-        return self.term
-
-class Posting:
-    def __init__(self, doc, frequency):
-        self.doc = doc
-        self.score = frequency
-
-    def compute_score(self, idf):
-        self.score *= idf
-
-    def __repr__(self):
-        return self.doc + ' : ' + str(self.score)
+        self.__open_new_pl__()
+        self.cached_posting_list = {}
+        self.map_term_id = {}
+        self.map_id_term = {}
+        self.term_id = 0
 
 
-def flush_on_disk(inverted_file, posting_lists):
-    pickle.dump(inverted_file, open('if.p', 'wb'))
-    posting_lists.flush()
-
-def input_N_topN(algo_op):
-    N = -1
-    while (not algo_op == 0) and True:
-        try :
-            N = int(input('Top ?  (the X of the TopX results ) :'))
-            if N > 0 :
-                break
-        except :
-            print ("Enter an integer plz")
-    return N
-
-def input_terms():
-    print("Enter terms one by one, line by line and end by 'E' : ")
-    terms = []
-    x = input('')
-    while not x == "E" :
-        terms.append(x)
-        x = input('')
-    return terms
-
-def input_choose_algo():
-    while True :
-        try:
-            algo_op = int(input("0 for Naive, 1 for Fagin, 2 for Fagins Threshold, 3 for Fagins Threshold With Epsilon\n"))
-            if algo_op in [0,1,2,3] :
-                break
-            else :
-                print ("0 or 1 or 2 or 3 plz")
-        except :
-            print ("0 or 1 or 2 or 3 plz")
-    return algo_op
-
-def calculate(algo_op,N,terms):
-    if algo_op == 0 :
-        ans = algoN.search(N,terms)
-    elif algo_op == 1 :
-        ans = algoF.search(N,terms)
-    elif algo_op == 2 :
-        ans = algoFT.search(N,terms)
-    elif algo_op == 3 :
-        ans = algoFTE.search(N,terms)
-    return ans
-# limit RAM here.
-resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
-# file = open(MMAP_FILE, 'wb')
-# mm_posting_lists = mmap.mmap(-1, 1024*1024*1024)
-# mm_posting_lists = np.memmap(MMAP_FILE, dtype='float32', mode='w+', shape=(10**13,2))
-# mm_posting_lists = open_memmap(MMAP_FILE, mode='w+', dtype=np.ubyte, shape=(10**9, 2))
-
-posting_lists = []
-vocabulary_set = {}
-try:
-    score_calculator = Scoring()
-    tokenizator = Tokenization()
-    list_files = os.listdir(TEST_DATAFOLDER)
-    nb_files = len(list_files)
-    nb_documents = 0
-    index = 0
-    for filename in list_files:
-        doc_terms = tokenizator.tokenization(filename)
-        for doc, terms in doc_terms.items():
-            term_frequency = {}
-            nb_documents += 1
-            # Count frequency.
-            for term in terms:
-                if term not in term_frequency:
-                    term_frequency[term] = 0
-                term_frequency[term] += 1
-
-            for term, frequency in term_frequency.items():
-                vocabulary = Vocabulary(term)
-                if term not in vocabulary_set:
-                    vocabulary_set[vocabulary] = index
-                    posting_lists.insert(index, [])
-                    # import pdb
-                    # pdb.set_trace()
-                    # mm_posting_lists[index] = []
-
-                    index += 1
-                posting_lists[vocabulary_set[term]].append(Posting(doc, frequency))
-                # import pdb; pdb.set_trace()
-                # mm_posting_lists.seek(mm_posting_lists[vocabulary_set[term]])
-                # mm_posting_lists.write(doc.encode())
+    def __open_new_pl__(self):
+        self.posting_list = []
 
 
-    for vocabulary, index_pl in vocabulary_set.items():
-        vocabulary.posting_list_size = len(posting_lists[index_pl])
-        idf_for_term = score_calculator.__idf__(vocabulary.posting_list_size, nb_documents)
-        for posting in posting_lists[index_pl]:
-            posting.compute_score(idf_for_term)
-
-    if SAVE_INDEX:
-        pickle.dump(vocabulary_set, open(INDEX_NAME, 'wb'))
-        pickle.dump(posting_lists, open(MMAP_FILE, 'wb'))
-
-#    import pdb
-#    pdb.set_trace()
-
-    # pprint.pprint(mm_posting_lists)
-    if DEBUG:
-        algoF = FaginAlgorithm(vocabulary_set,posting_lists)
-        algoN = NaiveAlgorithm(vocabulary_set,posting_lists)
-        algoFT = FaginsThreshold_Algorithm(vocabulary_set,posting_lists)
-        algoFTE = FaginsThreshold_WithEpsilon_Algorithm(vocabulary_set,posting_lists)
-        while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
-            algo_op = input_choose_algo()
-            N = input_N_topN(algo_op)
-            terms = input_terms()
-            print(terms)
-            ans = calculate(algo_op,N,terms)
-            print("-------------ans--------------")
-            pprint.pprint(ans)
-            print("-------------ans--------------")
-            # html = HtmlWriter()
-            # terms_string = ''.join(terms)
-            # print("---"+terms_string+"---")
-            # html.writeHTMLresponse(terms_string,ans)
+    def build_partial(self):
+        filename_processed = set()
+        tokenize = Tokenization()
+        documents_processed = 0
+        for filename in self.list_files:
+            map_doc_terms = tokenize.tokenization(filename, remove_tags=True, remove_stopwords=True, stemming=False)
+            for doc, terms in map_doc_terms.items():
+                documents_processed += 1
+                if documents_processed > 1000:
+                    self.flush()
+                    documents_processed = 0
+                term_frequency = Counter(terms)
+                for term, frequency in term_frequency.items():
+                    if term not in self.map_term_id:
+                        self.map_term_id[term] = self.term_id
+                        self.map_id_term[self.term_id] = term
+                        self.term_id += 1
+                    to_write = (int(doc), self.map_term_id[term], frequency)
+                    self.posting_list.append(to_write)
+                    # if term == 'youth':
+                    #     print(doc + ' ' + str(frequency) + ' ' + str(self.posting_list.tell()) + ' ' + str(len(to_write)))
+            filename_processed.add(filename)
+            self.nb_documents += documents_processed
+            self.flush()
 
 
-except MemoryError:
-    print('explosion')
-    import pdb; pdb.set_trace()
-    # flush_on_disk(vocabulary_set, posting_lists)
+    def compute_idf(self):
+        for term, info in self.inverted_file.items():
+            index = info['index']
+            idf_score = idf(info['size'], self.nb_documents)
+            for i in range(len(self.posting_list[index])):
+                doc, frequency = self.posting_list[index][i]
+                self.posting_list[index][i] = (doc, frequency * idf_score)
 
-# except:
-#     print('Crash !')
-    # import pdb
-    # pdb.set_trace()
 
-print(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-print('memory used')
-file.close()
+    def flush(self):
+        self.part += 1
+        self.posting_list.sort(key=lambda entry: (entry[1], entry[0]))
+        pl_file = open(PL_FILE+'.'+str(self.part), 'w')
+        for tuple in self.posting_list:
+            pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
+        pl_file.close()
+        self.__open_new_pl__()
+        print('Flushed pl to disk, part ' + str(self.part))
+
+
+    def merge(self):
+        self.inverted_file = {}
+        merged = 1
+        to_merge = []
+        for i in range(1, self.part+1):
+            to_merge.append(PL_FILE+'.'+str(i))
+
+        merged_pl = []
+        with contextlib.ExitStack() as stack:
+            files = [stack.enter_context(open(fn)) for fn in to_merge]
+            with open(PL_FILE, 'wb') as f:
+                for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]))):
+                    docid, termid, frequency = line.split(' ')
+                    to_write = pack('III', *(int(docid), int(termid), int(frequency)))
+                    f.write(to_write)
+
+        nb_lines = 0
+        end_of_file = False
+        with open(PL_FILE, 'r+b') as f:
+            while not end_of_file:
+                chunk = f.read(12)
+                if chunk:
+                    docid, termid, frequency = unpack('III', chunk)
+                    term = self.map_id_term[termid]
+                    if term not in self.inverted_file:
+                        self.inverted_file[term] = {'index': nb_lines, 'size': 0, 'idf': 0}
+                    self.inverted_file[term]['size'] += 1
+                    nb_lines += 1
+                else:
+                    end_of_file = True
+
+        for term, info in self.inverted_file.items():
+            self.inverted_file[term]['idf'] = idf(info['size'], self.nb_documents)
+
+        self.complete = True
+
+
+    def __getitem__(self, term):
+        if term not in self.inverted_file:
+            return []
+        term_info = self.inverted_file[term]
+        index, size, idf = term_info['index'], term_info['size'], term_info['idf']
+        pl = []
+        if term in self.cached_posting_list:
+            pl = self.cached_posting_list[term]
+        else:
+            with open(PL_FILE, 'rb') as f:
+                f.seek(index * 12)
+                end_pl = 12 * (index + size)
+                while not f.tell() >= end_pl:
+                    chunk = f.read(12)
+                    if chunk:
+                        docid, termid, frequency = unpack('III', chunk)
+                        if term == self.map_id_term[termid]:
+                            pl.append((docid, frequency * idf))
+                        else:
+                            print('going to far {} not {}'.format(self.map_id_term[termid], term))
+                    else:
+                        print('euuh')
+            self.cached_posting_list[term] = pl
+        return pl
+
+
+# if LIMIT_RAM:
+#     resource.setrlimit(resource.RLIMIT_AS, (RAM_LIMIT_MB*1024*1024, RAM_LIMIT_MB*1024*1024))
+#
+# ifb = InvertedFileBuilder()
+# try:
+#     ifb.build_partial()
+# except MemoryError:
+#     print(resource.getrusage(resource.RUSAGE_SELF))
+#     ifb.flush()
+# ifb.flush()
+# ifb.merge()
+#
+# from pprint import pprint as pp
+# import pdb; pdb.set_trace()
