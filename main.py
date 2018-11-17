@@ -53,8 +53,6 @@ def op_arg_parser():
     return [arg_parser,args,datafolder,filename,map]
 
 def main():
-
-
     arg_parser,args,datafolder,filename,map = op_arg_parser()
 
     inverted_file = operation_file(datafolder, filename, map)
@@ -73,3 +71,5 @@ def main():
         print("-------------ans--------------")
 
 # main()
+if __name__ == '__main__':
+    main()

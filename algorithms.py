@@ -314,7 +314,6 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 class FaginAlgorithm(Algorithm):
     def search(self, k, query_list):
         posting_list = self.load_documents(query_list)
-        pprint.pprint(posting_list)
         posting_list_sorted_by_score = self.sort_posting_list(posting_list)
         posting_list_sorted = self.create_dictionary_from_posting_list(posting_list,len(query_list))
         return self.fagin_algorithm(query_list, posting_list_sorted, posting_list_sorted_by_score, k)
@@ -324,6 +323,7 @@ class FaginAlgorithm(Algorithm):
         for documents_with_score in posting_list_sorted :
             documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
         return posting_list_sorted
+
     def create_dictionary_from_posting_list(self, posting_list, n): #needed for good access time or use a btree library
         posting_list_dictionary = [{}] * n # should works
         for i in range(0, n-1):
@@ -337,30 +337,29 @@ class FaginAlgorithm(Algorithm):
         selected_document = {} # M : [avg, nbItem]
         document_to_display = [] # C: [avg]
         # set cursor for parallel scan
-        for i in (0, n-1):
+        for i in range(0, n):
             list_iterator.append(iter(posting_list[i]))
 
         exit_condition = False
         #Fagin start
         end_of_file = 0
-        while exit_condition != True: # |C|=k or end of file
-            for i in (0, n-1):
+        while not exit_condition: # |C|=k or end of file
+            for i in range(0, n):
                 # work here
                 document = next(list_iterator[i], None)
-                if document == None:
+                if document is None:
                     end_of_file = end_of_file + 1
-                    pprint.pprint(end_of_file)
                     if end_of_file == n:
                         exit_condition = True
                     break
                 test = selected_document.get(document[0], None)
-                if test == None:
+                if test is None:
                     selected_document[document[0]] = AgregateAvg(document[1], document[0], i, n)
                     test = selected_document.get(document[0], None)
                 else:
                     selected_document[document[0]].updateAvg(document[1], i)
                 if selected_document[document[0]].n == n: # also check when n = 1
-                    document_to_display.append((selected_document[document[0]].document, selected_document[document[0]].value))
+                    document_to_display.append(Document(selected_document[document[0]].document, selected_document[document[0]].value))
                     del selected_document[document[0]]
                     if len(document_to_display) >= k:
                         exit_condition = True
@@ -370,15 +369,15 @@ class FaginAlgorithm(Algorithm):
             query_term_to_see = document.unseen_query_term()
             for query_term in query_term_to_see:
                 found_document = posting_list_sorted[i].get(document.document, None)
-                if found_document == None: # if doc not found
+                if found_document is None: # if doc not found
                     can_be_added = False
                     break
                 score = found_document[1]
                 document.updateAvg(score, i)
             if can_be_added:
-                document_to_display.append((selected_document[key].document, selected_document[key].value))
+                document_to_display.append(Document(selected_document[key].document, selected_document[key].value))
             # no need to remove from selected document
-        document_to_display.sort(key=lambda doc: doc[1], reverse=True)
+        document_to_display.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
         return document_to_display[:k]
 
 class AgregateAvg:
@@ -397,13 +396,13 @@ class AgregateAvg:
     def updateAvg(self, value_to_add, i):
         self.sum_value += value_to_add
         self.n = 1 + self.n
-        pprint.pprint(self.n)
         self.value = self.sum_value / self.n
         self.seen[i] = True
+
     def unseen_query_term(self):
         unseen_list = []
         n = len(self.seen)
-        for i in range (0,n-1):
-            if self.seen[i] != True:
+        for i in range(0, n):
+            if not self.seen[i]:
                 unseen_list.append(i)
         return unseen_list
