@@ -45,6 +45,8 @@ class Tokenization:
             if stemming:
                 tokenized_text = self.__stemming__(tokenized_text)
 
+            tokenized_text = [x.lower() for x in tokenized_text]
+
             dict[docid] = tokenized_text
 
         file.close()

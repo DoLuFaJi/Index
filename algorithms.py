@@ -199,6 +199,7 @@ class FaginsThreshold_Algorithm(Algorithm):
                 index_pl = 0
                 for documents_with_score in posting_list :
                     taus.append(documents_with_score[pointers[index_pl]-1][1])
+                    index_pl += 1
                 tau = sum(taus) / float(len(taus))
 # 3
         document_to_display = []
@@ -299,6 +300,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
                 index_pl = 0
                 for documents_with_score in posting_list :
                     taus.append(documents_with_score[pointers[index_pl]-1][1])
+                    index_pl += 1
                 tau = sum(taus) / float(len(taus))
 # 3
         document_to_display = []
