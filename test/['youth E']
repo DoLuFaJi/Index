@@ -1,0 +1,6 @@
+
+        <!DOCTYPE html>
+        <html>
+        <body>
+        <h1>Index Dolufaji</h1>
+        <p>Response for request ['youth E']</p><p>END Response for request ['youth E']END</p></body></html><script>function showDiv(lala) {console.log(document.getElementById(lala).style.display);if(document.getElementById(lala).style.display === 'none'){document.getElementById(lala).style.display = "block";}else{document.getElementById(lala).style.display = "none";}}</script>

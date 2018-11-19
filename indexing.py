@@ -8,7 +8,7 @@ from struct import pack, unpack
 from collections import Counter
 
 from processing import Tokenization, idf
-from settings import LIMIT_RAM, RAM_LIMIT_MB, PL_FILE_RAM_LIMIT, CHUNK_SIZE
+from settings import LIMIT_RAM, RAM_LIMIT_MB, PL_FILE_RAM_LIMIT, CHUNK_SIZE, BATCH_SIZE
 
 class InvertedFileBuilder:
     def __init__(self, datafolder, filename, mit):
@@ -46,7 +46,7 @@ class InvertedFileBuilder:
                 map_doc_terms = tokenize.tokenization(filename, self.datafolder, remove_tags=True, remove_stopwords=True, stemming=False)
                 for doc, terms in map_doc_terms.items():
                     documents_processed += 1
-                    if documents_processed > 1000:
+                    if documents_processed > BATCH_SIZE:
                         self.flush()
                         documents_processed = 0
                     term_frequency = Counter(terms)
@@ -71,7 +71,7 @@ class InvertedFileBuilder:
             pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
         pl_file.close()
         self.__open_new_pl__()
-        print('Flushed pl to disk, part ' + str(self.part))
+        #print('Flushed pl to disk, part ' + str(self.part))
 
 
     def merge(self):

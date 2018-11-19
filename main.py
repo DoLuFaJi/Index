@@ -5,6 +5,7 @@ from interface import input_terms, input_N_topN, input_choose_algo
 from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
+from processing import Tokenization, idf
 from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE
 
 def operation_file(datafolder, filename, map):
@@ -62,7 +63,12 @@ def main():
         algo_op = input_choose_algo()
         N = input_N_topN(algo_op)
         terms = input_terms()
+        #remove stop words
+        tokenize = Tokenization()
+        terms = tokenize.remove_stopwords(terms)
+        terms = [x.lower() for x in terms]
         print(terms)
+
         ans = calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE)
         print("-------------ans--------------")
         # import pdb; pdb.set_trace()
