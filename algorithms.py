@@ -86,7 +86,7 @@ class NaiveAlgorithm(Algorithm):
                         seen = 1
 
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-        return document_to_display
+        return document_to_display[:10]
 
 '''
         def naive_algorithm(self, query_list, posting_list):
@@ -116,7 +116,6 @@ class FaginsThreshold_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
-
 # slide dans le dossier note page 20
 # 1
         C = {}
@@ -217,7 +216,6 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
-
 # slide dans le dossier note page 20
 # 1
         C = {}
@@ -309,6 +307,55 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
         return document_to_display
+
+
+class FaginAlgorithmW(Algorithm):
+    def search(self, k, query_list):
+        posting_list = self.load_documents(query_list)
+        return self.fagin_algorithm(k, query_list, posting_list)
+
+    def fagin_algorithm(self, k, query_list, posting_list):
+        show_doc = []
+        doc_seen = {}
+        doc_unseen = {}
+        for documents_with_score in posting_list:
+            documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+
+        doc_seen_for_each_qt = {}
+        index_pl = 0
+        exit_condition = False
+        while len(show_doc) <= k and not exit_condition:
+            for index_doc_seen in range(len(query_list)):
+                pl_doc = posting_list[index_doc_seen]
+                if len(pl_doc) <= index_pl:
+                    exit_condition = True
+                    break
+                doc, score = pl_doc[index_pl]
+
+                if doc not in doc_seen:
+                    doc_seen[doc] = []
+                    doc_unseen[doc] = {i for i in range(len(query_list))}
+                doc_unseen[doc].remove(index_doc_seen)
+                doc_seen[doc].append(score)
+                if len(doc_seen[doc]) == len(query_list):
+                    show_doc.append(Document(doc, sum(doc_seen[doc])))
+                    del doc_seen[doc]
+            index_pl += 1
+
+        for doc, unseen_qts in doc_unseen.items():
+            for unseen_qt in unseen_qts:
+                unseen_pl = posting_list[unseen_qt]
+                if len(unseen_pl) <= index_pl:
+                    break
+                for i in range(index_pl, len(unseen_pl)):
+                    unseen_doc, unseen_score = unseen_pl[i]
+                    if unseen_doc == doc:
+                        doc_seen[unseen_doc].append(unseen_score)
+                        if len(doc_seen[unseen_doc]) == len(query_list):
+                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc])))
+
+        show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
+        return show_doc[:k]
 
 
 class FaginAlgorithm(Algorithm):

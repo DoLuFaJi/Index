@@ -4,4 +4,4 @@ class Document:
         self.score = score
 
     def __repr__(self):
-        return str(self.name)
+        return str(self.name) + ' ' + str(self.score)

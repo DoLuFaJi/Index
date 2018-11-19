@@ -2,7 +2,7 @@ import pprint
 import argparse
 
 from interface import input_terms, input_N_topN, input_choose_algo
-from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm
+from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm, FaginAlgorithmW
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
 from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE
@@ -26,7 +26,7 @@ def calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE):
     return ans
 
 def init(inverted_file):
-    algoF = FaginAlgorithm(inverted_file)
+    algoF = FaginAlgorithmW(inverted_file)
     algoN = NaiveAlgorithm(inverted_file)
     algoFT = FaginsThreshold_Algorithm(inverted_file)
     algoFTE = FaginsThreshold_WithEpsilon_Algorithm(inverted_file)
@@ -66,7 +66,7 @@ def main():
         ans = calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE)
         print("-------------ans--------------")
         # import pdb; pdb.set_trace()
-        html.writeHTMLresponse(str(terms), ans)
+        # html.writeHTMLresponse(str(terms), ans)
         pprint.pprint(ans)
         print("-------------ans--------------")
 
