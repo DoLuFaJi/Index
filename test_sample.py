@@ -49,17 +49,22 @@ def test_answer():
             ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
             t2 = time.time()
             t[op_algo] = t2 - t1
-            list_times[op_algo].append(t[op_algo])
+            #list_times[op_algo].append(t[op_algo])
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
         for j in range(len(ans[3])):
             for i in [1,2,3]:
                 #assert(ans[i][j].score == ans[0][j].score)
                 if ans[i][j].score != ans[0][j].score:
-                    print("bad algo...."+str(i))
+                    print("bad algo...."+str(i)+" "+str(terms))
         rate[1] += t[1]/t[0]
         rate[2] += t[2]/t[0]
         rate[3] += t[3]/t[0]
+        list_times[0].append(1)
+        list_times[1].append(t[1]/t[0])
+        list_times[2].append(t[2]/t[0])
+        list_times[3].append(t[3]/t[0])
+
 
         #print("-------------ans--------------\n")
 
@@ -69,7 +74,7 @@ def test_answer():
     print( "    " + str(int((1-rate[1]/1000)*100)) + "% acceleration compared with naive algo." )
     print( "Fagins Threshold :")
     print( "    " + str(int((1-rate[2]/1000)*100)) + "% acceleration compared with naive algo." )
-    print( "    " + str(int((1-rate[2]//rate[1])*100)) + "% acceleration compared with Fagins." )
+    print( "    " + str(int((1-rate[2]/rate[1])*100)) + "% acceleration compared with Fagins." )
     print( "Fagins Threshold With Epsilon:")
     print( "    " + str(int((1-rate[3]/1000)*100)) + "% acceleration compared with naive algo," )
     print( "    " + str(int((1-rate[3]/rate[1])*100)) + "% acceleration compared with Fagins." )
@@ -78,14 +83,19 @@ def test_answer():
     plt.subplot(2,1,1)
     plt.title("4 algo")
     plt.plot(list_nbterms, list_times[0], 'ro')
+    list_nbterms = [x+0.1 for x in list_nbterms]
     plt.plot(list_nbterms, list_times[1], 'go')
+    list_nbterms = [x+0.1 for x in list_nbterms]
     plt.plot(list_nbterms, list_times[2], 'bo')
+    list_nbterms = [x+0.1 for x in list_nbterms]
     plt.plot(list_nbterms, list_times[3], 'ko')
 
     plt.subplot(2,1,2)
     plt.title("k for fagins")
     plt.plot(list_k, list_times[1], 'go')
+    list_k = [x+0.1 for x in list_k]
     plt.plot(list_k, list_times[2], 'bo')
+    list_k = [x+0.1 for x in list_k]
     plt.plot(list_k, list_times[3], 'ko')
     plt.show()
 
