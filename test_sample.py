@@ -191,9 +191,7 @@ def test_generate():
         print(BATCH_SIZE)
         print("----------------bf------------------")
 
-        t1_b = time.time()
         inverted_file = InvertedFileBuilder(datafolder, filename, map)
-        t2_b = time.time()
 
         t1_bp = time.time()
         inverted_file.build_partial()

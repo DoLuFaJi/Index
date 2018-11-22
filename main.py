@@ -1,3 +1,5 @@
+
+
 import pprint
 import argparse
 
@@ -77,6 +79,9 @@ def main():
         tokenize = Tokenization()
         terms = tokenize.remove_stopwords(terms)
         terms = [x.lower() for x in terms]
+        if STEMMING:
+            porter = nltk.PorterStemmer()
+            [porter.stem(t) for t in terms]
         print(terms)
 
         ans = calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE)
