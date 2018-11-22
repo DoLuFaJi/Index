@@ -8,7 +8,7 @@ from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
 from processing import Tokenization, idf
-from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE
+from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE, STEMMING
 
 def operation_file(datafolder, filename, map):
     inverted_file = InvertedFileBuilder(datafolder, filename, map)
@@ -77,8 +77,12 @@ def main():
         terms = input_terms()
         #remove stop words
         tokenize = Tokenization()
-        terms = tokenize.remove_stopwords(terms)
-        terms = [x.lower() for x in terms]
+        full_term = ''
+        for t in terms:
+            full_term += t + ' '
+        full_term = full_term[:-1]
+        terms = tokenize.__remove_stopwords__(full_term)
+        terms = [x.lower() for x in terms.split(' ')]
         if STEMMING:
             porter = nltk.PorterStemmer()
             [porter.stem(t) for t in terms]

@@ -356,7 +356,7 @@ class FaginAlgorithmW(Algorithm):
                     if unseen_doc == doc:
                         doc_seen[unseen_doc].append(unseen_score)
                         if len(doc_seen[unseen_doc]) == len(query_list):
-                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc] / len(doc_seen[unseen_doc]))))
+                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc]) / len(doc_seen[unseen_doc])))
 
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
         return show_doc[:k]
