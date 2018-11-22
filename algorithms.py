@@ -4,7 +4,7 @@ from document import Document
 from settings import EPSILON
 MININT = -10000000
 
-sort_pl = True
+sort_pl = False
 
 class Algorithm:
     def __init__(self, index):

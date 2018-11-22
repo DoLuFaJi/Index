@@ -82,7 +82,7 @@ class InvertedFileBuilder:
 
     def flush(self):
         self.part += 1
-        self.posting_list.sort(key=lambda entry: (entry[1], entry[0]))
+        self.posting_list.sort(key=lambda entry: (entry[1], entry[0], entry[2]))
         pl_file = open(self.filename+'.'+str(self.part), 'w')
         for tuple in self.posting_list:
             pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
@@ -103,7 +103,7 @@ class InvertedFileBuilder:
             with contextlib.ExitStack() as stack:
                 files = [stack.enter_context(open(fn)) for fn in to_merge]
                 with open(self.filename, 'wb') as f:
-                    for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]))):
+                    for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]), int(entry.split()[2]))):
                         docid, termid, frequency = line.split(' ')
                         to_write = pack('III', *(int(docid), int(termid), int(frequency)))
                         f.write(to_write)

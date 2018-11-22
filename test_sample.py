@@ -131,12 +131,13 @@ def test_answer():
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
-                if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
+                #if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
+                if ans[i][j].score != ans[0][j].score :
                     print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score))
 
         for j in range(len(ans[3])):
             if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
-                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+ans[i][j].score - ans[0][j].score) / ans[0][j].score)
+                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+str((ans[i][j].score - ans[0][j].score) / ans[0][j].score))
 
         rate[1] += t[1]/t[0]
         rate[2] += t[2]/t[0]
@@ -146,12 +147,12 @@ def test_answer():
         list_times[2].append(t[2]/t[0])
         list_times[3].append(t[3]/t[0])
 
-        if (t[1]/t[0]) > 1:
-            print("time too long for algo 1 "+str(terms))
-        if (t[2]/t[0]) > 1:
-            print("time too long for algo 2 "+str(terms))
-        if (t[3]/t[0]) > 1:
-            print("time too long for algo 3 "+str(terms))
+        if t[1]/t[0] > 1:
+            print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
+        if t[2]/t[0] > 1:
+            print("time too long for algo 2 "+str(terms)+str(t[2]/t[0]))
+        if t[3]/t[0] > 1:
+            print("time too long for algo 3 "+str(terms)+str(t[3]/t[0]))
 
 
         #print("-------------ans--------------\n")
