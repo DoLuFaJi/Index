@@ -34,10 +34,13 @@ def init(inverted_file):
     return [algoF,algoN,algoFT,algoFTE]
 
 def op_arg_parser():
-    arg_parser = argparse.ArgumentParser()
+    arg_parser = argparse.ArgumentParser("Better than Google and Duckduckgo")
     arg_parser.add_argument('-d', '--datafolder', help='Choose datafolder', type=str)
     arg_parser.add_argument('-n', '--name', help='Choose filename', type=str)
     arg_parser.add_argument('-m', '--map', help='Map id term, set to load an index', type=str)
+    arg_parser.add_argument('-s', '--stemming', help='Do you want stemming ? (yes) -take a lit of time ==', type=str)
+    arg_parser.add_argument('-b', '--batchsize', help='Choose your batch size - default=1000', type=int)
+    arg_parser.add_argument('-e', '--epsilon', help='Epsilon for Fagins', type=int)
     datafolder = DATAFOLDER
     filename = PL_FILE
     map = ''
@@ -50,6 +53,13 @@ def op_arg_parser():
         filename = args.name
     if args.map is not None:
         map = args.map
+
+    if args.stemming is not None:
+        STEMMING = True
+    if args.batchsize is not None:
+        BATCHSIZE = args.batchsize
+    if args.epsilon is not None:
+        EPSILON = args.epsilon
 
     return [arg_parser,args,datafolder,filename,map]
 

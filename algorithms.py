@@ -4,6 +4,8 @@ from document import Document
 from settings import EPSILON
 MININT = -10000000
 
+sort_pl = True
+
 class Algorithm:
     def __init__(self, index):
         self.index = index
@@ -124,8 +126,9 @@ class FaginsThreshold_Algorithm(Algorithm):
         mu_min = 100000
         doc_seen_for_each_qt = {}
         pointers = [0] * len(word_list)
-        for documents_with_score in posting_list :
-            documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+        if sort_pl:
+            for documents_with_score in posting_list :
+                documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
@@ -225,8 +228,9 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         mu_min = 100000
         doc_seen_for_each_qt = {}
         pointers = [0] * len(word_list)
-        for documents_with_score in posting_list :
-            documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+        if sort_pl:
+            for documents_with_score in posting_list :
+                documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
