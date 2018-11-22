@@ -349,9 +349,9 @@ class FaginAlgorithmW(Algorithm):
         for doc, unseen_qts in doc_unseen.items():
             for unseen_qt in unseen_qts:
                 unseen_pl = posting_list[unseen_qt]
-                if len(unseen_pl) <= index_pl:
+                if len(unseen_pl) < index_pl:
                     break
-                for i in range(index_pl, len(unseen_pl)):
+                for i in range(index_pl-1, len(unseen_pl)):
                     unseen_doc, unseen_score = unseen_pl[i]
                     if unseen_doc == doc:
                         doc_seen[unseen_doc].append(unseen_score)
