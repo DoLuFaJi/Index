@@ -110,14 +110,16 @@ def test_answer():
             ep = random.random()
         # N_terms = 1
         for i in range(nterms) :
-            terms.append(random.choice(list(inverted_file.inverted_file.keys())))
+            term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
+            while inverted_file.inverted_file[term]['size'] < 50 :
+                term = random.choice(list(inverted_file.inverted_file.keys()))
+            terms.append(term)
         #print("-------------ans--------------")
         #print(k)
         #print(terms)
         list_nbterms.append(nterms)
         list_k.append(N)
         list_e.append(ep)
-
         for op_algo in [0,1,2,3]:
             t1 = time.time()
             ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
@@ -127,10 +129,15 @@ def test_answer():
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
         for j in range(len(ans[3])):
-            for i in [1,2,3]:
+            for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
-                if ans[i][j].score != ans[0][j].score:
-                    print("bad algo...."+str(i)+" "+str(terms))
+                if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
+                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score))
+
+        for j in range(len(ans[3])):
+            if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
+                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+ans[i][j].score - ans[0][j].score) / ans[0][j].score)
+
         rate[1] += t[1]/t[0]
         rate[2] += t[2]/t[0]
         rate[3] += t[3]/t[0]
@@ -138,6 +145,13 @@ def test_answer():
         list_times[1].append(t[1]/t[0])
         list_times[2].append(t[2]/t[0])
         list_times[3].append(t[3]/t[0])
+
+        if (t[1]/t[0]) > 1:
+            print("time too long for algo 1 "+str(terms))
+        if (t[2]/t[0]) > 1:
+            print("time too long for algo 2 "+str(terms))
+        if (t[3]/t[0]) > 1:
+            print("time too long for algo 3 "+str(terms))
 
 
         #print("-------------ans--------------\n")
@@ -172,7 +186,7 @@ def test_answer():
     plt.plot(list_k, list_times[3], 'ko')
     plt.show()
 
-    plt.title("e for faginse")
+    plt.title("e for fagins_e")
     plt.plot(list_e, list_times[3], 'ko')
     plt.show()
 
