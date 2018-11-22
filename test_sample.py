@@ -53,7 +53,9 @@ def test_arg_parser():
     test_epsilon = False
     test_nbterms = False
     test_batch = False
+
     k_fagins = 10
+    N_terms = 3
 
     args = arg_parser.parse_args()
     if args.numberoftest is not None:
@@ -71,8 +73,10 @@ def test_arg_parser():
                 k_fagins = args.k
         if "b" in args.tests:
                 test_batch = True
+        if args.nbterms is not None:
+            N_terms = args.nbterms
 
-    return [arg_parser,args,datafolder,filename,map, NbTest, test_algo, test_k, test_epsilon, test_nbterms, test_batch, k_fagins,epsilon]
+    return [arg_parser,args,datafolder,filename,map, NbTest, test_algo, test_k, test_epsilon, test_nbterms, test_batch, k_fagins,epsilon,N_terms]
 
 def test_answer():
     print("Start of loading files...")
@@ -96,20 +100,21 @@ def test_answer():
         bar.update(k + 1)
         N = k_fagins
         ep = epsilon
+        nterms = N_terms
         if test_k:
             N = random.randint(1,20)
         terms = []
         if test_nbterms:
-            N_terms = random.randint(1,5)
+            nterms = random.randint(1,5)
         if test_epsilon:
             ep = random.random()
         # N_terms = 1
-        for i in range(N_terms) :
+        for i in range(nterms) :
             terms.append(random.choice(list(inverted_file.inverted_file.keys())))
         #print("-------------ans--------------")
         #print(k)
         #print(terms)
-        list_nbterms.append(N_terms)
+        list_nbterms.append(nterms)
         list_k.append(N)
         list_e.append(ep)
 
@@ -214,7 +219,7 @@ def test_generate():
     plt.plot(batch_sizes, times_tot, 'k')
     plt.show()
 
-arg_parser,args,datafolder,filename,map,NbTest, test_algo, test_k, test_epsilon, test_nbterms, test_batch, k_fagins, epsilon = test_arg_parser()
+arg_parser,args,datafolder,filename,map,NbTest, test_algo, test_k, test_epsilon, test_nbterms, test_batch, k_fagins, epsilon, N_terms = test_arg_parser()
 
 bar = progressbar.ProgressBar(maxval=NbTest, \
     widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
