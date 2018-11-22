@@ -10,6 +10,7 @@ class HtmlWriter:
     #the created file is in ./test and its name is the request
     def __init__(self, datafolder):
         self.datafolder = datafolder
+        self.error = False
 
     def __write__(self, request, text):
         try:
@@ -17,8 +18,8 @@ class HtmlWriter:
             file.write(text)
         except:
             print("Error: can\'t find file or write data")
+            self.error = True
         else:
-            print("Written content in the file successfully")
             file.close()
 
     def remove(self, request):
@@ -27,8 +28,7 @@ class HtmlWriter:
                 os.remove('./test/'+request)
         except:
             print("Error: can\'t find file")
-        else:
-            print("Removed file correctly")
+            self.error = True
 
     def header(self, request, details = ""):
         text = """
@@ -66,8 +66,8 @@ class HtmlWriter:
             self.__write__(request, text)
 
         except Exception as e:
-            import pdb; pdb.set_trace()
             print("Error: can\'t find file - adddocument")
+            self.error = True
 
     def writeHTMLresponse(self, request, response):
         self.remove(request)
@@ -75,7 +75,8 @@ class HtmlWriter:
         for r in response:
             self.addDocument(str(r.name), request, str(r.score))
         self.footer(request)
-        print("""Generated file in './test/'"""+request)
+        if self.error == False:
+            print("""Generated file in './test/'"""+request)
 #
 # from document import Document
 #

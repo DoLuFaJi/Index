@@ -1,3 +1,5 @@
+
+
 import pprint
 import argparse
 
@@ -5,6 +7,7 @@ from interface import input_terms, input_N_topN, input_choose_algo
 from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm, FaginAlgorithmW
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
+from processing import Tokenization, idf
 from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE
 
 def operation_file(datafolder, filename, map):
@@ -33,10 +36,13 @@ def init(inverted_file):
     return [algoF,algoN,algoFT,algoFTE]
 
 def op_arg_parser():
-    arg_parser = argparse.ArgumentParser()
+    arg_parser = argparse.ArgumentParser("Better than Google and Duckduckgo")
     arg_parser.add_argument('-d', '--datafolder', help='Choose datafolder', type=str)
     arg_parser.add_argument('-n', '--name', help='Choose filename', type=str)
     arg_parser.add_argument('-m', '--map', help='Map id term, set to load an index', type=str)
+    arg_parser.add_argument('-s', '--stemming', help='Do you want stemming ? (yes) -take a lit of time ==', type=str)
+    arg_parser.add_argument('-b', '--batchsize', help='Choose your batch size - default=1000', type=int)
+    arg_parser.add_argument('-e', '--epsilon', help='Epsilon for Fagins', type=int)
     datafolder = DATAFOLDER
     filename = PL_FILE
     map = ''
@@ -50,6 +56,13 @@ def op_arg_parser():
     if args.map is not None:
         map = args.map
 
+    if args.stemming is not None:
+        STEMMING = True
+    if args.batchsize is not None:
+        BATCHSIZE = args.batchsize
+    if args.epsilon is not None:
+        EPSILON = args.epsilon
+
     return [arg_parser,args,datafolder,filename,map]
 
 def main():
@@ -62,7 +75,15 @@ def main():
         algo_op = input_choose_algo()
         N = input_N_topN(algo_op)
         terms = input_terms()
+        #remove stop words
+        tokenize = Tokenization()
+        terms = tokenize.remove_stopwords(terms)
+        terms = [x.lower() for x in terms]
+        if STEMMING:
+            porter = nltk.PorterStemmer()
+            [porter.stem(t) for t in terms]
         print(terms)
+
         ans = calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE)
         print("-------------ans--------------")
         # import pdb; pdb.set_trace()

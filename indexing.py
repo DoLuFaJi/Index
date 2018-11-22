@@ -6,9 +6,10 @@ import contextlib
 from heapq import merge
 from struct import pack, unpack
 from collections import Counter
+import numpy
 
 from processing import Tokenization, idf
-from settings import LIMIT_RAM, RAM_LIMIT_MB, PL_FILE_RAM_LIMIT, CHUNK_SIZE
+from settings import LIMIT_RAM, RAM_LIMIT_MB, PL_FILE_RAM_LIMIT, CHUNK_SIZE, BATCH_SIZE, STEMMING
 
 class InvertedFileBuilder:
     def __init__(self, datafolder, filename, mit):
@@ -39,14 +40,24 @@ class InvertedFileBuilder:
 
     def build_partial(self):
         if not self.complete:
+            random_indexing_doc = {}
+            random_indexing_word = {}
             filename_processed = set()
             tokenize = Tokenization()
             documents_processed = 0
             for filename in self.list_files:
-                map_doc_terms = tokenize.tokenization(filename, self.datafolder, remove_tags=True, remove_stopwords=True, stemming=False)
+                map_doc_terms = tokenize.tokenization(filename, self.datafolder, remove_tags=True, remove_stopwords=True, stemming=STEMMING)
                 for doc, terms in map_doc_terms.items():
+#########################################
+                    random_indexing_doc[doc] = numpy.zeros(5000)
+                    for i in range(0, 5):
+                        random_indexing_doc[doc][i] = 1
+                    for i in range(6, 11):
+                        random_indexing_doc[doc][i] = -1
+                    numpy.random.shuffle(random_indexing_doc[doc])
+#########################################
                     documents_processed += 1
-                    if documents_processed > 1000:
+                    if documents_processed > BATCH_SIZE:
                         self.flush()
                         documents_processed = 0
                     term_frequency = Counter(terms)
@@ -54,7 +65,13 @@ class InvertedFileBuilder:
                         if term not in self.map_term_id:
                             self.map_term_id[term] = self.term_id
                             self.map_id_term[self.term_id] = term
+############################################
+                            random_indexing_word[term] = numpy.zeros(5000)
+###########################################
                             self.term_id += 1
+###########################################
+                        random_indexing_word[term] += random_indexing_doc[doc]
+###########################################
                         to_write = (int(doc), self.map_term_id[term], frequency)
                         self.posting_list.append(to_write)
                 filename_processed.add(filename)

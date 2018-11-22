@@ -19,3 +19,6 @@ EPSILON = 0.5
 CHUNK_SIZE = 12
 INVERTED_FILE = 'inverted_file_part'
 PL_FILE = 'pl_file_part'
+BATCH_SIZE = 1000
+
+STEMMING = False
