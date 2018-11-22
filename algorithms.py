@@ -86,7 +86,7 @@ class NaiveAlgorithm(Algorithm):
                         seen = 1
 
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-        return document_to_display[:10]
+        return document_to_display
 
 '''
         def naive_algorithm(self, query_list, posting_list):
@@ -338,7 +338,7 @@ class FaginAlgorithmW(Algorithm):
                 doc_unseen[doc].remove(index_doc_seen)
                 doc_seen[doc].append(score)
                 if len(doc_seen[doc]) == len(query_list):
-                    show_doc.append(Document(doc, sum(doc_seen[doc])))
+                    show_doc.append(Document(doc, sum(doc_seen[doc]) / len(doc_seen[doc])))
                     del doc_seen[doc]
             index_pl += 1
 
@@ -352,7 +352,7 @@ class FaginAlgorithmW(Algorithm):
                     if unseen_doc == doc:
                         doc_seen[unseen_doc].append(unseen_score)
                         if len(doc_seen[unseen_doc]) == len(query_list):
-                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc])))
+                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc] / len(doc_seen[unseen_doc]))))
 
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
         return show_doc[:k]
