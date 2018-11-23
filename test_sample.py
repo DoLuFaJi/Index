@@ -5,7 +5,7 @@ import pprint
 import progressbar
 import matplotlib.pyplot as plt
 
-from settings import BATCH_SIZE, EPSILON, DATAFOLDER, PL_FILE, TEST_DATAFOLDER
+from settings import BATCH_SIZE, EPSILON, DATAFOLDER, PL_FILE, TEST_DATAFOLDER, STEMMING
 from indexing import InvertedFileBuilder
 
 import argparse
@@ -224,12 +224,12 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
-    for BATCH_SIZE in [1, 1000, 1000, 10000, 100000, 200000, 500000, 800000]:
+    for BATCH_SIZE in [1000, 10000, 50000, 50000]:
         print("----------------b------------------")
         print(BATCH_SIZE)
         print("----------------bf------------------")
 
-        inverted_file = InvertedFileBuilder(datafolder, filename, map)
+        inverted_file = InvertedFileBuilder(datafolder, filename, map, BATCH_SIZE, STEMMING)
 
         t1_bp = time.time()
         inverted_file.build_partial()

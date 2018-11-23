@@ -1,10 +1,33 @@
 import pprint
 import copy
+import operator
+from bisect import bisect_left
+
 from document import Document
 from settings import EPSILON
 MININT = -10000000
 
 sort_pl = False
+
+def binary_search(arr, value):
+    """Given a sorted sequence arr, return the leftmost i such that
+    arr[i] == value. Raise ValueError if no element in arr is equal
+    to value.
+
+    """
+    left = 0
+    right = len(arr)
+    while left < right:
+        mid = (left + right) // 2
+        if value > arr[mid][0]:
+            left = mid + 1
+        else:
+            right = mid
+    if left != len(arr) and arr[left][0] == value:
+        return left
+    else:
+        return -1
+
 
 class Algorithm:
     def __init__(self, index):
@@ -25,6 +48,18 @@ class Algorithm:
 
     def score_sort(self, document):
         return document.rank
+
+
+class NewNaiveAlgorithm(Algorithm):
+    def search(self, k, query_list):
+        posting_list = self.load_documents(query_list)
+        return self.naive(query_list, posting_list)
+
+    def naive(self, query_list, posting_list):
+        for documents_with_score in posting_list :
+            documents_with_score.sort(key=lambda doc: int(doc[1]), reverse=True)
+
+
 
 
 class NaiveAlgorithm(Algorithm):
@@ -86,8 +121,8 @@ class NaiveAlgorithm(Algorithm):
                     else :
                         score = value[1]
                         seen = 1
-
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
+        # print('Naive ' + str(len(document_to_display)))
         return document_to_display
 
 '''
@@ -209,6 +244,8 @@ class FaginsThreshold_Algorithm(Algorithm):
             if mu > 0 :
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
+        # print('FTA ' + str(len(document_to_display)))
+
         return document_to_display
 
 
@@ -310,6 +347,8 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             if mu > 0 :
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
+        # print('FTAE ' + str(len(document_to_display)))
+
         return document_to_display
 
 
@@ -322,15 +361,16 @@ class FaginAlgorithmW(Algorithm):
         show_doc = []
         doc_seen = {}
         doc_unseen = {}
+        random_pl = copy.deepcopy(posting_list)
         for documents_with_score in posting_list:
             documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
 
-        doc_seen_for_each_qt = {}
+        nb_qt = len(query_list)
         index_pl = 0
         exit_condition = False
         while len(show_doc) <= k and not exit_condition:
-            for index_doc_seen in range(len(query_list)):
-                pl_doc = posting_list[index_doc_seen]
+            for qt in range(nb_qt):
+                pl_doc = posting_list[qt]
                 if len(pl_doc) <= index_pl:
                     exit_condition = True
                     break
@@ -338,27 +378,29 @@ class FaginAlgorithmW(Algorithm):
 
                 if doc not in doc_seen:
                     doc_seen[doc] = []
-                    doc_unseen[doc] = {i for i in range(len(query_list))}
-                doc_unseen[doc].remove(index_doc_seen)
+                    doc_unseen[doc] = {i for i in range(nb_qt)}
+                doc_unseen[doc].remove(qt)
                 doc_seen[doc].append(score)
-                if len(doc_seen[doc]) == len(query_list):
+                if len(doc_seen[doc]) == nb_qt:
                     show_doc.append(Document(doc, sum(doc_seen[doc]) / len(doc_seen[doc])))
                     del doc_seen[doc]
+                    del doc_unseen[doc]
             index_pl += 1
 
         for doc, unseen_qts in doc_unseen.items():
             for unseen_qt in unseen_qts:
-                unseen_pl = posting_list[unseen_qt]
-                if len(unseen_pl) < index_pl:
-                    break
-                for i in range(index_pl-1, len(unseen_pl)):
-                    unseen_doc, unseen_score = unseen_pl[i]
-                    if unseen_doc == doc:
-                        doc_seen[unseen_doc].append(unseen_score)
-                        if len(doc_seen[unseen_doc]) == len(query_list):
-                            show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc]) / len(doc_seen[unseen_doc])))
+                unseen_pl = random_pl[unseen_qt]
+                index = binary_search(unseen_pl, doc)
+                if index > -1:
+                    unseen_doc, unseen_score = unseen_pl[index]
+                    doc_seen[unseen_doc].append(unseen_score)
+                    if len(doc_seen[unseen_doc]) == nb_qt:
+                        show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc]) / len(doc_seen[unseen_doc])))
+                        break
 
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
+        # print('FA ' + str(len(show_doc)))
+
         return show_doc[:k]
 
 
