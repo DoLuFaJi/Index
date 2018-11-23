@@ -51,14 +51,6 @@ class InvertedFileBuilder:
             for filename in self.list_files:
                 map_doc_terms = tokenize.tokenization(filename, self.datafolder, remove_tags=True, remove_stopwords=True, stemming=self.stemming)
                 for doc, terms in map_doc_terms.items():
-#########################################
-                    random_indexing_doc[doc] = numpy.zeros(5000)
-                    for i in range(0, 5):
-                        random_indexing_doc[doc][i] = 1
-                    for i in range(6, 11):
-                       random_indexing_doc[doc][i] = -1
-                    numpy.random.shuffle(random_indexing_doc[doc])
-#########################################
                     documents_processed += 1
                     if documents_processed > self.batch_size:
                         self.flush()
@@ -68,13 +60,7 @@ class InvertedFileBuilder:
                         if term not in self.map_term_id:
                             self.map_term_id[term] = self.term_id
                             self.map_id_term[self.term_id] = term
-############################################
-                            random_indexing_word[term] = numpy.zeros(5000)
-###########################################
                             self.term_id += 1
-###########################################
-                        random_indexing_word[term] += random_indexing_doc[doc]
-###########################################
                         to_write = (int(doc), self.map_term_id[term], frequency)
                         self.posting_list.append(to_write)
             self.flush()

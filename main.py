@@ -2,7 +2,7 @@ import pprint
 import argparse
 
 from interface import input_terms, input_N_topN, input_choose_algo
-from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm, FaginAlgorithmW
+from algorithms import NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshold_WithEpsilon_Algorithm, FaginAlgorithmW
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
 from processing import Tokenization, idf
@@ -67,8 +67,6 @@ def main():
     arg_parser,args,datafolder,filename,map = op_arg_parser()
 
     inverted_file = operation_file(datafolder, filename, map)
-
-    
 
     algoF,algoN,algoFT,algoFTE = init(inverted_file)
     html = HtmlWriter(datafolder)
