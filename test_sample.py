@@ -131,22 +131,18 @@ def test_answer():
             #list_times[op_algo].append(t[op_algo])
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
-        list_results[0].append(len(ans[0]))
-        list_results[1].append(len(ans[1]))
-        list_results[2].append(len(ans[2]))
-        list_results[3].append(len(ans[3]))
+
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
                 #if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
                 if ans[i][j].score != ans[0][j].score :
-                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score))
+                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score)+" doc: "+str(j))
 
         for j in range(len(ans[3])):
             if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
                 print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+str((ans[i][j].score - ans[0][j].score) / ans[0][j].score))
         if len(ans[0]) > 50 :
-
             rate[1] += t[1]/t[0]
             rate[2] += t[2]/t[0]
             rate[3] += t[3]/t[0]
@@ -154,6 +150,15 @@ def test_answer():
             list_times[1].append(t[1]/t[0])
             list_times[3].append(t[3]/t[0])
             list_times[2].append(t[2]/t[0])
+
+            list_results[0].append(len(ans[0]))
+            list_results[1].append(len(ans[1]))
+            list_results[2].append(len(ans[2]))
+            list_results[3].append(len(ans[3]))
+
+            list_nbterms.append(nterms)
+            list_k.append(N)
+            list_e.append(ep)
 
             if t[1]/t[0] > 1:
                 print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
@@ -167,49 +172,51 @@ def test_answer():
 
     bar.finish()
 
-
     Nb = len(list_nbterms)
-    print( "Fagins :")
-    print( "    " + str(int((1-rate[1]/Nb)*100)) + "% acceleration compared with naive algo." )
-    print( "Fagins Threshold :")
-    print( "    " + str(int((1-rate[2]/Nb)*100)) + "% acceleration compared with naive algo." )
-    print( "    " + str(int((1-rate[2]/rate[1])*100)) + "% acceleration compared with Fagins." )
-    print( "Fagins Threshold With Epsilon:")
-    print( "    " + str(int((1-rate[3]/Nb)*100)) + "% acceleration compared with naive algo." )
-    print( "    " + str(int((1-rate[3]/rate[1])*100)) + "% acceleration compared with Fagins." )
-    print( "    " + str(int((1-rate[3]/rate[2])*100)) + "% acceleration compared with Fagins Threshold." )
+    if Nb == 0:
+        print("no results")
+    else:
+        print( "Fagins :")
+        print( "    " + str(int((1-rate[1]/Nb)*100)) + "% acceleration compared with naive algo." )
+        print( "Fagins Threshold :")
+        print( "    " + str(int((1-rate[2]/Nb)*100)) + "% acceleration compared with naive algo." )
+        print( "    " + str(int((1-rate[2]/rate[1])*100)) + "% acceleration compared with Fagins." )
+        print( "Fagins Threshold With Epsilon:")
+        print( "    " + str(int((1-rate[3]/Nb)*100)) + "% acceleration compared with naive algo." )
+        print( "    " + str(int((1-rate[3]/rate[1])*100)) + "% acceleration compared with Fagins." )
+        print( "    " + str(int((1-rate[3]/rate[2])*100)) + "% acceleration compared with Fagins Threshold." )
 
-    plt.title("4 algo")
-    plt.plot(list_nbterms, list_times[0], 'ro')
-    list_nbterms = [x+0.1 for x in list_nbterms]
-    plt.plot(list_nbterms, list_times[1], 'go')
-    list_nbterms = [x+0.1 for x in list_nbterms]
-    plt.plot(list_nbterms, list_times[2], 'bo')
-    list_nbterms = [x+0.1 for x in list_nbterms]
-    plt.plot(list_nbterms, list_times[3], 'ko')
-    plt.show()
+        plt.title("4 algo")
+        plt.plot(list_nbterms, list_times[0], 'ro')
+        list_nbterms = [x+0.1 for x in list_nbterms]
+        plt.plot(list_nbterms, list_times[1], 'go')
+        list_nbterms = [x+0.1 for x in list_nbterms]
+        plt.plot(list_nbterms, list_times[2], 'bo')
+        list_nbterms = [x+0.1 for x in list_nbterms]
+        plt.plot(list_nbterms, list_times[3], 'ko')
+        plt.show()
 
-    plt.title("k for fagins")
-    plt.plot(list_k, list_times[1], 'go')
-    list_k = [x+0.1 for x in list_k]
-    plt.plot(list_k, list_times[2], 'bo')
-    list_k = [x+0.1 for x in list_k]
-    plt.plot(list_k, list_times[3], 'ko')
-    plt.show()
+        plt.title("k for fagins")
+        plt.plot(list_k, list_times[1], 'go')
+        list_k = [x+0.1 for x in list_k]
+        plt.plot(list_k, list_times[2], 'bo')
+        list_k = [x+0.1 for x in list_k]
+        plt.plot(list_k, list_times[3], 'ko')
+        plt.show()
 
-    plt.title("e for fagins_e")
-    plt.plot(list_e, list_times[3], 'ko')
-    plt.show()
+        plt.title("e for fagins_e")
+        plt.plot(list_e, list_times[3], 'ko')
+        plt.show()
 
-    plt.title("lenght results")
-    plt.plot(list_results[0], list_times[0], 'ro')
-    list_nbterms = [x+0.1 for x in list_results[1]]
-    plt.plot(list_results[1], list_times[1], 'go')
-    list_nbterms = [x+0.2 for x in list_results[2]]
-    plt.plot(list_results[2], list_times[2], 'bo')
-    list_nbterms = [x+0.3 for x in list_results[3]]
-    plt.plot(list_results[3], list_times[3], 'ko')
-    plt.show()
+        plt.title("lenght results")
+        plt.plot(list_results[0], list_times[0], 'ro')
+        list_nbterms = [x+0.1 for x in list_results[1]]
+        plt.plot(list_results[1], list_times[1], 'go')
+        list_nbterms = [x+0.2 for x in list_results[2]]
+        plt.plot(list_results[2], list_times[2], 'bo')
+        list_nbterms = [x+0.3 for x in list_results[3]]
+        plt.plot(list_results[3], list_times[3], 'ko')
+        plt.show()
 
 
 def test_generate():

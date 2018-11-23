@@ -7,7 +7,7 @@ from document import Document
 from settings import EPSILON
 MININT = -10000000
 
-sort_pl = False
+sort_pl = True
 
 def binary_search(arr, value):
     """Given a sorted sequence arr, return the leftmost i such that
