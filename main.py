@@ -8,10 +8,10 @@ from algorithms import FaginAlgorithm, NaiveAlgorithm, FaginsThreshold_Algorithm
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
 from processing import Tokenization, idf
-from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE, STEMMING
+from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE, STEMMING, BATCH_SIZE
 
 def operation_file(datafolder, filename, map):
-    inverted_file = InvertedFileBuilder(datafolder, filename, map)
+    inverted_file = InvertedFileBuilder(datafolder, filename, map, BATCH_SIZE, STEMMING)
     inverted_file.build_partial()
     inverted_file.merge()
     inverted_file.save()
