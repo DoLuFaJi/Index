@@ -113,11 +113,7 @@ def test_answer():
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
-<<<<<<< HEAD
-            while inverted_file.inverted_file[term]['size'] < 50000 :
-=======
             while inverted_file.inverted_file[term]['size'] < 500 :
->>>>>>> c69f3fc940dd0a9261e4841d6cb95b49838bc32a
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
@@ -225,11 +221,7 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
-<<<<<<< HEAD
     for BATCH_SIZE in [1000, 10000, 50000, 50000]:
-=======
-    for BATCH_SIZE in [1, 1000, 1000, 10000, 100000, 200000, 500000, 800000]:
->>>>>>> c69f3fc940dd0a9261e4841d6cb95b49838bc32a
         print("----------------b------------------")
         print(BATCH_SIZE)
         print("----------------bf------------------")
