@@ -1,0 +1,19 @@
+modifier hehe ^^
+
+#Faire varier les termes de 1 à 100
+python test_sample.py -n hehe -m hehe_mit -t "an" -k 10 -e 0.5
+
+#Faire varier k pour les fagins
+python test_sample.py -n hehe -m hehe_mit -t "ak" -r 1 -e 0.5
+python test_sample.py -n hehe -m hehe_mit -t "ak" -r 2 -e 0.5
+python test_sample.py -n hehe -m hehe_mit -t "ak" -r 10 -e 0.5
+python test_sample.py -n hehe -m hehe_mit -t "ak" -r 50 -e 0.5
+
+#Faire varier epsilon de 0 à 1
+python test_sample.py -n hehe -m hehe_mit -t "ae" -r 10 -k=10
+
+#Batch size
+python test_sample.py -n hehe -m hehe_mit -t "b" -r 50 -e 0.5 -k 10
+
+-> pour generer avec stemming
+python main.py -n hehe -s yes

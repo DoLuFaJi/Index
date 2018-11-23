@@ -49,12 +49,12 @@ class InvertedFileBuilder:
                 map_doc_terms = tokenize.tokenization(filename, self.datafolder, remove_tags=True, remove_stopwords=True, stemming=STEMMING)
                 for doc, terms in map_doc_terms.items():
 #########################################
-                    random_indexing_doc[doc] = numpy.zeros(5000)
-                    for i in range(0, 5):
-                        random_indexing_doc[doc][i] = 1
-                    for i in range(6, 11):
-                        random_indexing_doc[doc][i] = -1
-                    numpy.random.shuffle(random_indexing_doc[doc])
+                    # random_indexing_doc[doc] = numpy.zeros(5000)
+                    # for i in range(0, 5):
+                    #     random_indexing_doc[doc][i] = 1
+                    # for i in range(6, 11):
+                    #     random_indexing_doc[doc][i] = -1
+                    # numpy.random.shuffle(random_indexing_doc[doc])
 #########################################
                     documents_processed += 1
                     if documents_processed > BATCH_SIZE:
@@ -66,11 +66,11 @@ class InvertedFileBuilder:
                             self.map_term_id[term] = self.term_id
                             self.map_id_term[self.term_id] = term
 ############################################
-                            random_indexing_word[term] = numpy.zeros(5000)
+                            # random_indexing_word[term] = numpy.zeros(5000)
 ###########################################
                             self.term_id += 1
 ###########################################
-                        random_indexing_word[term] += random_indexing_doc[doc]
+                        # random_indexing_word[term] += random_indexing_doc[doc]
 ###########################################
                         to_write = (int(doc), self.map_term_id[term], frequency)
                         self.posting_list.append(to_write)
@@ -82,7 +82,7 @@ class InvertedFileBuilder:
 
     def flush(self):
         self.part += 1
-        self.posting_list.sort(key=lambda entry: (entry[1], entry[0]))
+        self.posting_list.sort(key=lambda entry: (entry[1], entry[0], entry[2]))
         pl_file = open(self.filename+'.'+str(self.part), 'w')
         for tuple in self.posting_list:
             pl_file.write('{} {} {}\n'.format(tuple[0], tuple[1], tuple[2]))
@@ -103,7 +103,7 @@ class InvertedFileBuilder:
             with contextlib.ExitStack() as stack:
                 files = [stack.enter_context(open(fn)) for fn in to_merge]
                 with open(self.filename, 'wb') as f:
-                    for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]))):
+                    for line in merge(*files, key=lambda entry: (int(entry.split()[1]), int(entry.split()[0]), int(entry.split()[2]))):
                         docid, termid, frequency = line.split(' ')
                         to_write = pack('III', *(int(docid), int(termid), int(frequency)))
                         f.write(to_write)
