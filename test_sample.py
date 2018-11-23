@@ -9,6 +9,7 @@ from settings import BATCH_SIZE, EPSILON, DATAFOLDER, PL_FILE, TEST_DATAFOLDER, 
 from indexing import InvertedFileBuilder
 
 import argparse
+import timeit
 
 def test_arg_parser():
     arg_parser = argparse.ArgumentParser("Run the tests")
@@ -54,8 +55,8 @@ def test_arg_parser():
     test_nbterms = False
     test_batch = False
 
-    k_fagins = 10
-    N_terms = 3
+    k_fagins = 1
+    N_terms = 2
 
     args = arg_parser.parse_args()
     if args.numberoftest is not None:
@@ -94,6 +95,7 @@ def test_answer():
     list_k = []
     list_e = []
     list_times = [[],[],[],[]]
+    list_results = [[],[],[],[]]
 
     for k in range(NbTest):
     #while True:
@@ -102,61 +104,82 @@ def test_answer():
         ep = epsilon
         nterms = N_terms
         if test_k:
-            N = random.randint(1,20)
+            N = random.randint(1,3)
         terms = []
         if test_nbterms:
-            nterms = random.randint(1,5)
+            nterms = random.randint(1,3)
         if test_epsilon:
             ep = random.random()
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
+<<<<<<< HEAD
             while inverted_file.inverted_file[term]['size'] < 50000 :
+=======
+            while inverted_file.inverted_file[term]['size'] < 500 :
+>>>>>>> c69f3fc940dd0a9261e4841d6cb95b49838bc32a
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
         #print(k)
         #print(terms)
-        list_nbterms.append(nterms)
-        list_k.append(N)
-        list_e.append(ep)
+
         for op_algo in [0,1,2,3]:
             t1 = time.time()
+            #import timeit
+            #t[op_algo] = timeit.timeit("calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)", globals=globals())
+            #cProfile.run('calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)')
             ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
             t2 = time.time()
             t[op_algo] = t2 - t1
             #list_times[op_algo].append(t[op_algo])
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
+        list_results[0].append(len(ans[0]))
+        list_results[1].append(len(ans[1]))
+        list_results[2].append(len(ans[2]))
+        list_results[3].append(len(ans[3]))
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
-                if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
-                    print("bad algo...."+str(i)+" "+str(terms))
+                #if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
+                if ans[i][j].score != ans[0][j].score :
+                    print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score))
 
         for j in range(len(ans[3])):
             if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
-                print("bad algo...."+str(i)+" "+str(terms))
-        rate[1] += t[1]/t[0]
-        rate[2] += t[2]/t[0]
-        rate[3] += t[3]/t[0]
-        list_times[0].append(1)
-        list_times[1].append(t[1]/t[0])
-        list_times[2].append(t[2]/t[0])
-        list_times[3].append(t[3]/t[0])
+                print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+str((ans[i][j].score - ans[0][j].score) / ans[0][j].score))
+        if len(ans[0]) > 50 :
+
+            rate[1] += t[1]/t[0]
+            rate[2] += t[2]/t[0]
+            rate[3] += t[3]/t[0]
+            list_times[0].append(1)
+            list_times[1].append(t[1]/t[0])
+            list_times[3].append(t[3]/t[0])
+            list_times[2].append(t[2]/t[0])
+
+            if t[1]/t[0] > 1:
+                print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
+            if t[2]/t[0] > 1:
+                print("time too long for algo 2 "+str(terms)+str(t[2]/t[0]))
+            if t[3]/t[0] > 1:
+                print("time too long for algo 3 "+str(terms)+str(t[3]/t[0]))
 
 
         #print("-------------ans--------------\n")
 
     bar.finish()
 
+
+    Nb = len(list_nbterms)
     print( "Fagins :")
-    print( "    " + str(int((1-rate[1]/1000)*100)) + "% acceleration compared with naive algo." )
+    print( "    " + str(int((1-rate[1]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "Fagins Threshold :")
-    print( "    " + str(int((1-rate[2]/1000)*100)) + "% acceleration compared with naive algo." )
+    print( "    " + str(int((1-rate[2]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "    " + str(int((1-rate[2]/rate[1])*100)) + "% acceleration compared with Fagins." )
     print( "Fagins Threshold With Epsilon:")
-    print( "    " + str(int((1-rate[3]/1000)*100)) + "% acceleration compared with naive algo," )
+    print( "    " + str(int((1-rate[3]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "    " + str(int((1-rate[3]/rate[1])*100)) + "% acceleration compared with Fagins." )
     print( "    " + str(int((1-rate[3]/rate[2])*100)) + "% acceleration compared with Fagins Threshold." )
 
@@ -178,8 +201,18 @@ def test_answer():
     plt.plot(list_k, list_times[3], 'ko')
     plt.show()
 
-    plt.title("e for faginse")
+    plt.title("e for fagins_e")
     plt.plot(list_e, list_times[3], 'ko')
+    plt.show()
+
+    plt.title("lenght results")
+    plt.plot(list_results[0], list_times[0], 'ro')
+    list_nbterms = [x+0.1 for x in list_results[1]]
+    plt.plot(list_results[1], list_times[1], 'go')
+    list_nbterms = [x+0.2 for x in list_results[2]]
+    plt.plot(list_results[2], list_times[2], 'bo')
+    list_nbterms = [x+0.3 for x in list_results[3]]
+    plt.plot(list_results[3], list_times[3], 'ko')
     plt.show()
 
 
@@ -192,7 +225,11 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
+<<<<<<< HEAD
     for BATCH_SIZE in [1000, 10000, 50000, 50000]:
+=======
+    for BATCH_SIZE in [1, 1000, 1000, 10000, 100000, 200000, 500000, 800000]:
+>>>>>>> c69f3fc940dd0a9261e4841d6cb95b49838bc32a
         print("----------------b------------------")
         print(BATCH_SIZE)
         print("----------------bf------------------")
@@ -229,6 +266,8 @@ bar = progressbar.ProgressBar(maxval=NbTest, \
     widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
 
 if test_algo:
+    #import cProfile
+    #cProfile.run('test_answer()', 'yayaya')
     test_answer()
 if test_batch:
     test_generate()
