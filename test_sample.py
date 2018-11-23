@@ -9,6 +9,7 @@ from settings import BATCH_SIZE, EPSILON, DATAFOLDER, PL_FILE, TEST_DATAFOLDER
 from indexing import InvertedFileBuilder
 
 import argparse
+import timeit
 
 def test_arg_parser():
     arg_parser = argparse.ArgumentParser("Run the tests")
@@ -94,6 +95,7 @@ def test_answer():
     list_k = []
     list_e = []
     list_times = [[],[],[],[]]
+    list_results = [[],[],[],[]]
 
     for k in range(NbTest):
     #while True:
@@ -102,10 +104,10 @@ def test_answer():
         ep = epsilon
         nterms = N_terms
         if test_k:
-            N = random.randint(1,20)
+            N = random.randint(1,3)
         terms = []
         if test_nbterms:
-            nterms = random.randint(1,5)
+            nterms = random.randint(1,3)
         if test_epsilon:
             ep = random.random()
         # N_terms = 1
@@ -122,12 +124,19 @@ def test_answer():
         list_e.append(ep)
         for op_algo in [0,1,2,3]:
             t1 = time.time()
+            #import timeit
+            #t[op_algo] = timeit.timeit("calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)", globals=globals())
+            #cProfile.run('calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)')
             ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
             t2 = time.time()
             t[op_algo] = t2 - t1
             #list_times[op_algo].append(t[op_algo])
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
+        list_results[0].append(len(ans[0]))
+        list_results[1].append(len(ans[1]))
+        list_results[2].append(len(ans[2]))
+        list_results[3].append(len(ans[3]))
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
@@ -191,6 +200,16 @@ def test_answer():
     plt.plot(list_e, list_times[3], 'ko')
     plt.show()
 
+    plt.title("lenght results")
+    plt.plot(list_results[0], list_times[0], 'ro')
+    list_nbterms = [x+0.1 for x in list_results[1]]
+    plt.plot(list_results[1], list_times[1], 'go')
+    list_nbterms = [x+0.2 for x in list_results[2]]
+    plt.plot(list_results[2], list_times[2], 'bo')
+    list_nbterms = [x+0.3 for x in list_results[3]]
+    plt.plot(list_results[3], list_times[3], 'ko')
+    plt.show()
+
 
 def test_generate():
 
@@ -201,7 +220,7 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
-    for BATCH_SIZE in [1, 1000, 10000, 50000, 50000, 200000,300000, 500000]:
+    for BATCH_SIZE in [1, 1000, 1000, 10000, 100000, 200000, 500000, 800000]:
         print("----------------b------------------")
         print(BATCH_SIZE)
         print("----------------bf------------------")
@@ -238,6 +257,8 @@ bar = progressbar.ProgressBar(maxval=NbTest, \
     widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
 
 if test_algo:
+    #import cProfile
+    #cProfile.run('test_answer()', 'yayaya')
     test_answer()
 if test_batch:
     test_generate()
