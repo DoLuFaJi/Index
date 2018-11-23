@@ -54,8 +54,8 @@ def test_arg_parser():
     test_nbterms = False
     test_batch = False
 
-    k_fagins = 10
-    N_terms = 3
+    k_fagins = 1
+    N_terms = 2
 
     args = arg_parser.parse_args()
     if args.numberoftest is not None:
@@ -102,24 +102,23 @@ def test_answer():
         ep = epsilon
         nterms = N_terms
         if test_k:
-            N = random.randint(1,20)
+            N = 1
+            # N = random.randint(1,2)
         terms = []
         if test_nbterms:
-            nterms = random.randint(1,5)
+            nterms = random.randint(1,3)
         if test_epsilon:
             ep = random.random()
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
-            while inverted_file.inverted_file[term]['size'] < 50 :
+            while inverted_file.inverted_file[term]['size'] < 500 :
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
         #print(k)
         #print(terms)
-        list_nbterms.append(nterms)
-        list_k.append(N)
-        list_e.append(ep)
+
         for op_algo in [0,1,2,3]:
             t1 = time.time()
             ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
@@ -137,26 +136,37 @@ def test_answer():
         for j in range(len(ans[3])):
             if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
                 print("bad algo...."+str(i)+" "+str(terms))
-        rate[1] += t[1]/t[0]
-        rate[2] += t[2]/t[0]
-        rate[3] += t[3]/t[0]
-        list_times[0].append(1)
-        list_times[1].append(t[1]/t[0])
-        list_times[2].append(t[2]/t[0])
-        list_times[3].append(t[3]/t[0])
 
+        if len(ans[0]) > 50 :
+            rate[1] += t[1]/t[0]
+            rate[2] += t[2]/t[0]
+            rate[3] += t[3]/t[0]
+            list_times[0].append(1)
+            list_times[1].append(t[1]/t[0])
+            list_times[2].append(t[2]/t[0])
+            list_times[3].append(t[3]/t[0])
+            list_nbterms.append(nterms)
+            list_k.append(N)
+            list_e.append(ep)
+            if t[3]>t[0]:
+                print(terms)
+                print(t[0])
+                print(t[3])
+                print('------------')
 
         #print("-------------ans--------------\n")
 
     bar.finish()
 
+
+    Nb = len(list_nbterms)
     print( "Fagins :")
-    print( "    " + str(int((1-rate[1]/1000)*100)) + "% acceleration compared with naive algo." )
+    print( "    " + str(int((1-rate[1]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "Fagins Threshold :")
-    print( "    " + str(int((1-rate[2]/1000)*100)) + "% acceleration compared with naive algo." )
+    print( "    " + str(int((1-rate[2]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "    " + str(int((1-rate[2]/rate[1])*100)) + "% acceleration compared with Fagins." )
     print( "Fagins Threshold With Epsilon:")
-    print( "    " + str(int((1-rate[3]/1000)*100)) + "% acceleration compared with naive algo," )
+    print( "    " + str(int((1-rate[3]/Nb)*100)) + "% acceleration compared with naive algo." )
     print( "    " + str(int((1-rate[3]/rate[1])*100)) + "% acceleration compared with Fagins." )
     print( "    " + str(int((1-rate[3]/rate[2])*100)) + "% acceleration compared with Fagins Threshold." )
 
