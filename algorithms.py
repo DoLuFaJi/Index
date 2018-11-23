@@ -50,18 +50,6 @@ class Algorithm:
         return document.rank
 
 
-class NewNaiveAlgorithm(Algorithm):
-    def search(self, k, query_list):
-        posting_list = self.load_documents(query_list)
-        return self.naive(query_list, posting_list)
-
-    def naive(self, query_list, posting_list):
-        for documents_with_score in posting_list :
-            documents_with_score.sort(key=lambda doc: int(doc[1]), reverse=True)
-
-
-
-
 class NaiveAlgorithm(Algorithm):
     def search(self,k, query_list):
         posting_list = self.load_documents(query_list)
@@ -76,8 +64,6 @@ class NaiveAlgorithm(Algorithm):
         list_iterator = []
         document_to_display = []
 
-        for documents_with_score in posting_list :
-            documents_with_score.sort(key=lambda doc: int(doc[0]), reverse=False)
         # pprint.pprint(posting_list) #https://www.quora.com/What-does-n-do-in-python
 
         # set cursor for parallel scan
@@ -122,7 +108,7 @@ class NaiveAlgorithm(Algorithm):
                         score = value[1]
                         seen = 1
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-        print('Naive ' + str(len(document_to_display)))
+        # print('Naive ' + str(len(document_to_display)))
         return document_to_display
 
 '''
@@ -153,28 +139,24 @@ class FaginsThreshold_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
-# slide dans le dossier note page 20
-# 1
+        sorted_pl = copy.deepcopy(posting_list)
         C = {}
         tau = 100001
         mu_min = 100000
         doc_seen_for_each_qt = {}
-        pointers = [0] * len(word_list)
+        query_size = len(word_list)
+        pointers = [0] * query_size
         if sort_pl:
-            for documents_with_score in posting_list :
+            for documents_with_score in sorted_pl :
                 documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
-        # pprint.pprint(posting_list)
-# 2
         flag_end = False
         while ((len(C) < k or tau - mu_min > 0.00001) and not flag_end ) :
-# 2.1
-            # print(tau,mu_min)
             max_score = -200000
             scores = []
             d = ""
             index_pl = -1
             word_index_pl = -1
-            for documents_with_score in posting_list :
+            for documents_with_score in sorted_pl :
                 index_pl += 1
                 pt = pointers[index_pl]
                 if pt >= len(documents_with_score) :
@@ -184,31 +166,27 @@ class FaginsThreshold_Algorithm(Algorithm):
                     d = documents_with_score[pt][0]
                     word_index_pl = index_pl
 
-# 2.1.1
             is_found_eachdoc = True
-            for documents_with_score in posting_list:
-                found = False
-                for document_found in documents_with_score :
-                    if document_found[0] == d :
-                        scores.append(document_found[1])
-                        found = True
-                        break
-                if not found :
+            for i in range(query_size) :
+                pl = posting_list[i]
+                index = binary_search(pl, int(d))
+                # print(index)
+                if index > -1:
+                    docccc , scoreeee = pl[index]
+                #    print(index,docccc,scoreeee)
+                    scores.append(scoreeee)
+                else:
                     is_found_eachdoc = False
             if is_found_eachdoc:
-                mu = sum(scores) / float(len(scores))
+                mu = sum(scores) / query_size
             else :
                 mu = MININT
-
-            # print (d,mu,pointers[0],pointers[1])
-# 2.1.2
             if len(C) < k :
                 C[d] = mu
                 if len(C) == 1 :
                     mu_min = mu
                 else :
                     mu_min = min(mu,mu_min)
-# 2.1.3
             elif mu_min < mu :
                 for (name,score) in C.items():
                     if mu_min == score:
@@ -219,33 +197,30 @@ class FaginsThreshold_Algorithm(Algorithm):
                 for score in C.values():
                     if mu_min > score:
                         mu_min = score
-# faire avancer les pointeurs
             index_pl = 0
             if word_index_pl != -1 :
                 pointers[word_index_pl] += 1
-            for documents_with_score in posting_list:
+            for documents_with_score in sorted_pl:
                 pt = pointers[index_pl]
                 while (pt < len(documents_with_score)) and (documents_with_score[pt][0] in C) :
                     pt += 1
                 pointers[index_pl] = pt
                 index_pl += 1
-# 2.1.4
             doc_seen_for_each_qt[word_index_pl] = 1
             taus = []
-            if len(doc_seen_for_each_qt) == len(word_list) :
+            if len(doc_seen_for_each_qt) == query_size :
                 index_pl = 0
-                for documents_with_score in posting_list :
+                for documents_with_score in sorted_pl :
                     taus.append(documents_with_score[pointers[index_pl]-1][1])
                     index_pl += 1
-                tau = sum(taus) / float(len(taus))
-# 3
+                tau = sum(taus) / query_size
+
         document_to_display = []
-        for d, mu in C.items() :
-            if mu > 0 :
+        for d, mu in C.items():
+            if mu > 0:
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
         # print('FTA ' + str(len(document_to_display)))
-
         return document_to_display
 
 
@@ -256,6 +231,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
+        sorted_pl = copy.deepcopy(posting_list)
 # slide dans le dossier note page 20
 # 1
         C = {}
@@ -264,7 +240,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         doc_seen_for_each_qt = {}
         pointers = [0] * len(word_list)
         if sort_pl:
-            for documents_with_score in posting_list :
+            for documents_with_score in sorted_pl:
                 documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
         # pprint.pprint(posting_list)
 # 2
@@ -277,7 +253,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             d = ""
             index_pl = -1
             word_index_pl = -1
-            for documents_with_score in posting_list :
+            for documents_with_score in sorted_pl :
                 index_pl += 1
                 pt = pointers[index_pl]
                 if pt >= len(documents_with_score) :
@@ -289,7 +265,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 
 # 2.1.1
             is_found_eachdoc = True
-            for documents_with_score in posting_list:
+            for documents_with_score in sorted_pl:
                 found = False
                 for document_found in documents_with_score :
                     if document_found[0] == d :
@@ -326,7 +302,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             index_pl = 0
             if word_index_pl != -1 :
                 pointers[word_index_pl] += 1
-            for documents_with_score in posting_list:
+            for documents_with_score in sorted_pl:
                 pt = pointers[index_pl]
                 while (pt < len(documents_with_score)) and (documents_with_score[pt][0] in C) :
                     pt += 1
@@ -337,7 +313,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             taus = []
             if len(doc_seen_for_each_qt) == len(word_list) :
                 index_pl = 0
-                for documents_with_score in posting_list :
+                for documents_with_score in sorted_pl :
                     taus.append(documents_with_score[pointers[index_pl]-1][1])
                     index_pl += 1
                 tau = sum(taus) / float(len(taus))
@@ -347,7 +323,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             if mu > 0 :
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
-        print('FTAE ' + str(len(document_to_display)))
+        # print('FTAE ' + str(len(document_to_display)))
 
         return document_to_display
 
@@ -361,8 +337,8 @@ class FaginAlgorithmW(Algorithm):
         show_doc = []
         doc_seen = {}
         doc_unseen = {}
-        random_pl = copy.deepcopy(posting_list)
-        for documents_with_score in posting_list:
+        sorted_pl = copy.deepcopy(posting_list)
+        for documents_with_score in sorted_pl:
             documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
 
         nb_qt = len(query_list)
@@ -370,7 +346,7 @@ class FaginAlgorithmW(Algorithm):
         exit_condition = False
         while len(show_doc) <= k and not exit_condition:
             for qt in range(nb_qt):
-                pl_doc = posting_list[qt]
+                pl_doc = sorted_pl[qt]
                 if len(pl_doc) <= index_pl:
                     exit_condition = True
                     break
@@ -389,7 +365,7 @@ class FaginAlgorithmW(Algorithm):
 
         for doc, unseen_qts in doc_unseen.items():
             for unseen_qt in unseen_qts:
-                unseen_pl = random_pl[unseen_qt]
+                unseen_pl = posting_list[unseen_qt]
                 index = binary_search(unseen_pl, doc)
                 if index > -1:
                     unseen_doc, unseen_score = unseen_pl[index]
@@ -399,7 +375,7 @@ class FaginAlgorithmW(Algorithm):
                         break
 
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
-        print('FA ' + str(len(show_doc)))
+        # print('FA ' + str(len(show_doc)))
 
         return show_doc[:k]
 
