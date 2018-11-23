@@ -131,7 +131,7 @@ class FaginsThreshold_Algorithm(Algorithm):
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
-        while ((len(C) < k or tau > mu_min) and not flag_end ) :
+        while ((len(C) < k or tau - mu_min > 0.00001) and not flag_end ) :
 # 2.1
             # print(tau,mu_min)
             max_score = -200000
@@ -232,7 +232,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
-        while ((len(C) < k or tau / ( 1 + EPSILON ) > mu_min) and not flag_end ) :
+        while ((len(C) < k or tau / ( 1 + EPSILON ) - mu_min > 0.00001) and not flag_end ) :
 # 2.1
             # print(tau,mu_min)
             max_score = -200000

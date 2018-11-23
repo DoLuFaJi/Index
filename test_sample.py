@@ -113,7 +113,7 @@ def test_answer():
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
-            while inverted_file.inverted_file[term]['size'] < 500 :
+            while inverted_file.inverted_file[term]['size'] < 1000 :
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
@@ -138,8 +138,8 @@ def test_answer():
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
-                #if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
-                if ans[i][j].score != ans[0][j].score :
+                if abs (ans[i][j].score - ans[0][j].score)> 0.00001 :
+                # if ans[i][j].score != ans[0][j].score :
                     print("bad results for algo...."+str(i)+" "+str(terms)+" difference="+str(ans[i][j].score - ans[0][j].score))
 
         for j in range(len(ans[3])):
@@ -154,6 +154,9 @@ def test_answer():
             list_times[1].append(t[1]/t[0])
             list_times[3].append(t[3]/t[0])
             list_times[2].append(t[2]/t[0])
+            list_nbterms.append(nterms)
+            list_k.append(N)
+            list_e.append(ep)
 
             if t[1]/t[0] > 1:
                 print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
