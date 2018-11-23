@@ -103,7 +103,8 @@ def test_answer():
     list_times = [[],[],[],[]]
     list_results = [[],[],[],[]]
 
-    for k in range(NbTest):
+    k = 0
+    while k < NbTest:
     #while True:
         bar.update(k + 1)
         N = k_fagins
@@ -113,13 +114,13 @@ def test_answer():
             N = random.randint(1,3)
         terms = []
         if test_nbterms:
-            nterms = random.randint(1,3)
+            nterms = random.randint(1,5)
         if test_epsilon:
             ep = random.random()
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
-            while inverted_file.inverted_file[term]['size'] < 1000 :
+            while inverted_file.inverted_file[term]['size'] < 5000 :
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
@@ -148,6 +149,7 @@ def test_answer():
             if abs (ans[i][j].score - ans[0][j].score) / ans[0][j].score > EPSILON :
                 print("bad results for algo...."+str(i)+" "+str(terms)+" difference rate="+str((ans[i][j].score - ans[0][j].score) / ans[0][j].score))
         if len(ans[0]) > 50 :
+            k += 1
             rate[1] += t[1]/t[0]
             rate[2] += t[2]/t[0]
             rate[3] += t[3]/t[0]
