@@ -1,5 +1,3 @@
-
-
 import pprint
 import argparse
 
@@ -69,6 +67,9 @@ def main():
     arg_parser,args,datafolder,filename,map = op_arg_parser()
 
     inverted_file = operation_file(datafolder, filename, map)
+
+    
+
     algoF,algoN,algoFT,algoFTE = init(inverted_file)
     html = HtmlWriter(datafolder)
     while not input('Enter Q (or q) for quit, otherwise continue ...\n') in ['Q','q'] :
