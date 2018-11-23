@@ -76,7 +76,7 @@ class InvertedFileBuilder:
 ###########################################
                         to_write = (int(doc), self.map_term_id[term], frequency)
                         self.posting_list.append(to_write)
-                self.flush()
+            self.flush()
         else:
             print('Ignore building because complete')
 

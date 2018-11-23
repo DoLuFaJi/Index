@@ -1,5 +1,6 @@
 from main import operation_file, init, calculate, op_arg_parser
 import random
+import string
 import time
 import pprint
 import progressbar
@@ -10,6 +11,11 @@ from indexing import InvertedFileBuilder
 
 import argparse
 import timeit
+
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 def test_arg_parser():
     arg_parser = argparse.ArgumentParser("Run the tests")
@@ -131,10 +137,6 @@ def test_answer():
             #list_times[op_algo].append(t[op_algo])
             #pprint.pprint(ans[op_algo])
             #Sprint(t[op_algo])
-        list_results[0].append(len(ans[0]))
-        list_results[1].append(len(ans[1]))
-        list_results[2].append(len(ans[2]))
-        list_results[3].append(len(ans[3]))
         for j in range(len(ans[3])):
             for i in [1,2]:
                 #assert(ans[i][j].score == ans[0][j].score)
@@ -154,6 +156,13 @@ def test_answer():
             list_times[1].append(t[1]/t[0])
             list_times[3].append(t[3]/t[0])
             list_times[2].append(t[2]/t[0])
+
+            list_results[0].append(len(ans[0]))
+            list_results[1].append(len(ans[1]))
+            list_results[2].append(len(ans[2]))
+            list_results[3].append(len(ans[3]))
+
+            list_nbterms.append(nterms)
 
             if t[1]/t[0] > 1:
                 print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
@@ -221,9 +230,10 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
-    for BATCH_SIZE in [1000, 10000, 50000, 50000]:
+    for BATCH_SIZE in [1000, 10000, 50000, 100000]:
+        filename = 'if/'+id_generator()
         print("----------------b------------------")
-        print(BATCH_SIZE)
+        print(str(BATCH_SIZE) + ' ' + filename)
         print("----------------bf------------------")
 
         inverted_file = InvertedFileBuilder(datafolder, filename, map, BATCH_SIZE, STEMMING)
@@ -236,10 +246,10 @@ def test_generate():
         inverted_file.merge()
         t2_m = time.time()
 
-        times_b.append(t2_b-t1_b)
+        times_b.append(t2_bp-t1_bp)
         times_bp.append(t2_bp-t1_bp)
         times_m.append(t2_m-t1_m)
-        times_tot.append(t2_m-t1_b)
+        times_tot.append(t2_m-t1_bp)
         batch_sizes.append(BATCH_SIZE)
 
     print(str(times_b))

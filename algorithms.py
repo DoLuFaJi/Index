@@ -7,7 +7,7 @@ from document import Document
 from settings import EPSILON
 MININT = -10000000
 
-sort_pl = False
+sort_pl = True
 
 def binary_search(arr, value):
     """Given a sorted sequence arr, return the leftmost i such that
@@ -122,7 +122,7 @@ class NaiveAlgorithm(Algorithm):
                         score = value[1]
                         seen = 1
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-        # print('Naive ' + str(len(document_to_display)))
+        print('Naive ' + str(len(document_to_display)))
         return document_to_display
 
 '''
@@ -347,7 +347,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             if mu > 0 :
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
-        # print('FTAE ' + str(len(document_to_display)))
+        print('FTAE ' + str(len(document_to_display)))
 
         return document_to_display
 
@@ -399,7 +399,7 @@ class FaginAlgorithmW(Algorithm):
                         break
 
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
-        # print('FA ' + str(len(show_doc)))
+        print('FA ' + str(len(show_doc)))
 
         return show_doc[:k]
 
