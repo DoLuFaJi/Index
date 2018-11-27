@@ -238,8 +238,8 @@ def test_generate():
     batch_sizes = []
     MAX_SIZE = 800000
     BATCH_SIZE = 1
-    for BATCH_SIZE in [1000, 10000, 50000, 100000]:
-        filename = 'if/'+id_generator()
+    for BATCH_SIZE in [200, 500, 1000, 10000, 25000, 50000, 75000, 100000]:
+        filename = 'if_test/'+id_generator()
         print("----------------b------------------")
         print(str(BATCH_SIZE) + ' ' + filename)
         print("----------------bf------------------")
