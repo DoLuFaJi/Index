@@ -1,12 +1,14 @@
 import pprint
 import copy
 import operator
+import time
 from bisect import bisect_left
 
 from document import Document
 from settings import EPSILON
 MININT = -10000000
 
+PRINT_LEN = False
 sort_pl = True
 
 def binary_search(arr, value):
@@ -56,6 +58,7 @@ class NaiveAlgorithm(Algorithm):
         return self.naive_algorithm(query_list, posting_list)
 
     def naive_algorithm(self, query_list, posting_list):
+        t1 = time.time()
         end_of_file = False
         maxDoc = 0
         seen = 0
@@ -108,7 +111,10 @@ class NaiveAlgorithm(Algorithm):
                         score = value[1]
                         seen = 1
         document_to_display.sort(key=lambda doc: doc.score, reverse=True)
-        # print('Naive ' + str(len(document_to_display)))
+        t2 = time.time()
+        if PRINT_LEN:
+            print('naive took ' + str(t2-t1))
+            print('Naive ' + str(len(document_to_display)))
         return document_to_display
 
 '''
@@ -139,16 +145,15 @@ class FaginsThreshold_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
-        sorted_pl = copy.deepcopy(posting_list)
         C = {}
         tau = 100001
         mu_min = 100000
         doc_seen_for_each_qt = {}
         query_size = len(word_list)
         pointers = [0] * query_size
-        if sort_pl:
-            for documents_with_score in sorted_pl :
-                documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+        sorted_pl = []
+        for documents_with_score in posting_list :
+            sorted_pl.append(sorted(documents_with_score, key=lambda doc: doc[1], reverse=True))
         flag_end = False
         while ((len(C) < k or tau - mu_min > 0.00001) and not flag_end ) :
             max_score = -200000
@@ -223,7 +228,8 @@ class FaginsThreshold_Algorithm(Algorithm):
             if mu > 0:
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
-        # print('FTA ' + str(len(document_to_display)))
+        if PRINT_LEN:
+            print('FTA ' + str(len(document_to_display)))
         return document_to_display
 
 
@@ -234,7 +240,6 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         return self.faginsThreshold_algorithm(k, word_list, posting_list)
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
-        sorted_pl = copy.deepcopy(posting_list)
         query_size = len(word_list)
 # slide dans le dossier note page 20
 # 1
@@ -243,9 +248,9 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         mu_min = 100000
         doc_seen_for_each_qt = {}
         pointers = [0] * query_size
-        if sort_pl:
-            for documents_with_score in sorted_pl:
-                documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+        sorted_pl = []
+        for documents_with_score in posting_list:
+            sorted_pl.append(sorted(documents_with_score, key=lambda doc: doc[1], reverse=True))
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
@@ -329,8 +334,8 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
             if mu > 0 :
                 document_to_display.append(Document(d,mu))
         document_to_display.sort(key=lambda doc : (doc.score, -int(doc.name)), reverse=True)
-        # print('FTAE ' + str(len(document_to_display)))
-
+        if PRINT_LEN:
+            print('FTAE ' + str(len(document_to_display)))
         return document_to_display
 
 
@@ -343,9 +348,12 @@ class FaginAlgorithmW(Algorithm):
         show_doc = []
         doc_seen = {}
         doc_unseen = {}
-        sorted_pl = copy.deepcopy(posting_list)
-        for documents_with_score in sorted_pl:
-            documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
+        t1 = time.time()
+        sorted_pl = []
+        t2 = time.time()
+        for documents_with_score in posting_list:
+            sorted_pl.append(sorted(documents_with_score,key=lambda doc: doc[1], reverse=True))
+        t3 = time.time()
 
         nb_qt = len(query_list)
         index_pl = 0
@@ -368,6 +376,7 @@ class FaginAlgorithmW(Algorithm):
                     del doc_seen[doc]
                     del doc_unseen[doc]
             index_pl += 1
+        t4 = time.time()
 
         for doc, unseen_qts in doc_unseen.items():
             for unseen_qt in unseen_qts:
@@ -380,8 +389,13 @@ class FaginAlgorithmW(Algorithm):
                         show_doc.append(Document(unseen_doc, sum(doc_seen[unseen_doc]) / len(doc_seen[unseen_doc])))
                         break
 
+        t5 = time.time()
         show_doc.sort(key=lambda doc: (doc.score, -int(doc.name)), reverse=True)
-        # print('FA ' + str(len(show_doc)))
+        t6 = time.time()
+
+        if PRINT_LEN:
+            print('Algo took ' + str(t6 - t1) + ' sort took ' + str(t3-t2) + ' copy took ' + str(t2-t1) + ' first took' + str(t4-t3) + ' second took ' + str(t5-t4) + ' final sort took' + str(t6-t5))
+            print('FA ' + str(len(show_doc)))
 
         return show_doc[:k]
 
