@@ -120,7 +120,7 @@ def test_answer():
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
-            while inverted_file.inverted_file[term]['size'] < 5000 :
+            while inverted_file.inverted_file[term]['size'] < 500 :
                 term = random.choice(list(inverted_file.inverted_file.keys()))
             terms.append(term)
         #print("-------------ans--------------")
@@ -165,10 +165,6 @@ def test_answer():
             list_results[1].append(len(ans[1]))
             list_results[2].append(len(ans[2]))
             list_results[3].append(len(ans[3]))
-
-            list_nbterms.append(nterms)
-            list_k.append(N)
-            list_e.append(ep)
 
             if t[1]/t[0] > 1:
                 print("time too long for algo 1 "+str(terms)+str(t[1]/t[0]))
