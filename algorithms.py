@@ -119,7 +119,7 @@ class NaiveAlgorithm(Algorithm):
         for document in document_list:
             can_be_added = True
             score = document[1]
-            for i in range(1, len(word_list)):
+            for i in range(1, query_size):
                 # refactored
                 if document not in documents_score_dictionary[word_list[i]]:
                     can_be_added = False
@@ -177,10 +177,13 @@ class FaginsThreshold_Algorithm(Algorithm):
                     scores.append(scoreeee)
                 else:
                     is_found_eachdoc = False
+                    break
             if is_found_eachdoc:
                 mu = sum(scores) / query_size
             else :
                 mu = MININT
+
+
             if len(C) < k :
                 C[d] = mu
                 if len(C) == 1 :
@@ -232,13 +235,14 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 
     def faginsThreshold_algorithm(self,k,word_list,posting_list):
         sorted_pl = copy.deepcopy(posting_list)
+        query_size = len(word_list)
 # slide dans le dossier note page 20
 # 1
         C = {}
         tau = 100001
         mu_min = 100000
         doc_seen_for_each_qt = {}
-        pointers = [0] * len(word_list)
+        pointers = [0] * query_size
         if sort_pl:
             for documents_with_score in sorted_pl:
                 documents_with_score.sort(key=lambda doc: doc[1], reverse=True)
@@ -265,17 +269,19 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 
 # 2.1.1
             is_found_eachdoc = True
-            for documents_with_score in sorted_pl:
-                found = False
-                for document_found in documents_with_score :
-                    if document_found[0] == d :
-                        scores.append(document_found[1])
-                        found = True
-                        break
-                if not found :
+            for i in range(query_size) :
+                pl = posting_list[i]
+                index = binary_search(pl, int(d))
+                # print(index)
+                if index > -1:
+                    docccc , scoreeee = pl[index]
+                #    print(index,docccc,scoreeee)
+                    scores.append(scoreeee)
+                else:
                     is_found_eachdoc = False
+                    break
             if is_found_eachdoc:
-                mu = sum(scores) / float(len(scores))
+                mu = sum(scores) / query_size
             else :
                 mu = MININT
 
@@ -311,7 +317,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 # 2.1.4
             doc_seen_for_each_qt[word_index_pl] = 1
             taus = []
-            if len(doc_seen_for_each_qt) == len(word_list) :
+            if len(doc_seen_for_each_qt) == query_size :
                 index_pl = 0
                 for documents_with_score in sorted_pl :
                     taus.append(documents_with_score[pointers[index_pl]-1][1])
