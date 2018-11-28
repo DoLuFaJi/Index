@@ -1,4 +1,5 @@
 import pprint
+import time
 import argparse
 
 from interface import input_terms, input_N_topN, input_choose_algo
@@ -86,14 +87,15 @@ def main():
             porter = nltk.PorterStemmer()
             [porter.stem(t) for t in terms]
         print(terms)
-
+        t1 = time.time()
         ans = calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE)
+        t2 = time.time()
         print("-------------ans--------------")
         # import pdb; pdb.set_trace()
         # html.writeHTMLresponse(str(terms), ans)
         pprint.pprint(ans)
         print("-------------ans--------------")
-
+        print('Found in ' + str(t2-t1))
 # main()
 if __name__ == '__main__':
     main()
