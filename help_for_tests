@@ -1,16 +1,16 @@
 modifier hehe ^^
 
-#Faire varier les termes de 1 à 100
-python test_sample.py -n hehe -m hehe_mit -t "an" -k 10 -e 0.5
+#test sans rien varier -> naif >50, pl >500 k=1, nbter=2, e0.5
+python test_sample.py -n hehe -m hehe_mit -t "a"
+
+#Faire varier les termes de 1 à 10
+python test_sample.py -n hehe -m hehe_mit -t "an" -k 1 -e 0.5
 
 #Faire varier k pour les fagins
-python test_sample.py -n hehe -m hehe_mit -t "ak" -r 1 -e 0.5
-python test_sample.py -n hehe -m hehe_mit -t "ak" -r 2 -e 0.5
-python test_sample.py -n hehe -m hehe_mit -t "ak" -r 10 -e 0.5
-python test_sample.py -n hehe -m hehe_mit -t "ak" -r 50 -e 0.5
+python test_sample.py -n hehe -m hehe_mit -t "ak" -r 2 -e 0.5 -c 50000
 
 #Faire varier epsilon de 0 à 1
-python test_sample.py -n hehe -m hehe_mit -t "ae" -r 10 -k=10
+python test_sample.py -n hehe -m hehe_mit -t "ae" -r 10 -k=1
 
 #Batch size
 python test_sample.py -n hehe -m hehe_mit -t "b" -r 50 -e 0.5 -k 10

@@ -111,12 +111,12 @@ def test_answer():
         ep = epsilon
         nterms = N_terms
         if test_k:
-            N = random.randint(1,3)
+            N = random.randint(1,100)
         terms = []
         if test_nbterms:
-            nterms = random.randint(1,5)
+            nterms = random.randint(1,10)
         if test_epsilon:
-            ep = random.random()
+            ep = round(random.random(),1)
         # N_terms = 1
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
