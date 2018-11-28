@@ -132,7 +132,7 @@ def test_answer():
             #import timeit
             #t[op_algo] = timeit.timeit("calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)", globals=globals())
             #cProfile.run('calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)')
-            ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)
+            ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE, epsilon)
             t2 = time.time()
             t[op_algo] = t2 - t1
             #list_times[op_algo].append(t[op_algo])

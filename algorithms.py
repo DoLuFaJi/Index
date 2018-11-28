@@ -235,11 +235,11 @@ class FaginsThreshold_Algorithm(Algorithm):
 
 class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
 
-    def search(self,k,word_list):
+    def search(self,k,word_list, epsilon=EPSILON):
         posting_list = self.load_documents(word_list)
-        return self.faginsThreshold_algorithm(k, word_list, posting_list)
+        return self.faginsThreshold_algorithm(k, word_list, posting_list,epsilon)
 
-    def faginsThreshold_algorithm(self,k,word_list,posting_list):
+    def faginsThreshold_algorithm(self,k,word_list,posting_list,epsilon):
         query_size = len(word_list)
 # slide dans le dossier note page 20
 # 1
@@ -254,7 +254,7 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         # pprint.pprint(posting_list)
 # 2
         flag_end = False
-        while ((len(C) < k or tau / ( 1 + EPSILON ) - mu_min > 0.00001) and not flag_end ) :
+        while ((len(C) < k or tau / ( 1 + epsilon ) - mu_min > 0.00001) and not flag_end ) :
 # 2.1
             # print(tau,mu_min)
             max_score = -200000

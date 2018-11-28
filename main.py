@@ -6,7 +6,7 @@ from algorithms import NaiveAlgorithm, FaginsThreshold_Algorithm, FaginsThreshol
 from indexing import InvertedFileBuilder
 from htmlwriter import HtmlWriter
 from processing import Tokenization, idf
-from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE, STEMMING, BATCH_SIZE
+from settings import DATAFOLDER, TEST_DATAFOLDER, PL_FILE, STEMMING, BATCH_SIZE, EPSILON
 
 def operation_file(datafolder, filename, map):
     inverted_file = InvertedFileBuilder(datafolder, filename, map, BATCH_SIZE, STEMMING)
@@ -15,7 +15,7 @@ def operation_file(datafolder, filename, map):
     inverted_file.save()
     return inverted_file
 
-def calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE):
+def calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE,epsilon=EPSILON):
     if algo_op == 0 :
         ans = algoN.search(N,terms)
     elif algo_op == 1 :
@@ -23,7 +23,7 @@ def calculate(algo_op,N,terms,algoF,algoN,algoFT,algoFTE):
     elif algo_op == 2 :
         ans = algoFT.search(N,terms)
     elif algo_op == 3 :
-        ans = algoFTE.search(N,terms)
+        ans = algoFTE.search(N,terms, epsilon)
     return ans
 
 def init(inverted_file):
