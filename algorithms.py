@@ -256,7 +256,6 @@ class FaginsThreshold_WithEpsilon_Algorithm(Algorithm):
         flag_end = False
         while ((len(C) < k or tau / ( 1 + epsilon ) - mu_min > 0.00001) and not flag_end ) :
 # 2.1
-            # print(tau,mu_min)
             max_score = -200000
             scores = []
             d = ""

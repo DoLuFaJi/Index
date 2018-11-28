@@ -116,8 +116,12 @@ def test_answer():
         if test_nbterms:
             nterms = random.randint(1,10)
         if test_epsilon:
-            ep = round(random.random(),1)
+            ep = random.random()
+            #ep = random.randint(0,1000)
         # N_terms = 1
+        # if test_epsilon:
+        #     terms = ["youth", "young"]
+        # else:
         for i in range(nterms) :
             term = random.choice(list(inverted_file.inverted_file.keys()))         # get random terms from dictionary
             while inverted_file.inverted_file[term]['size'] < 500 :
@@ -132,7 +136,7 @@ def test_answer():
             #import timeit
             #t[op_algo] = timeit.timeit("calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)", globals=globals())
             #cProfile.run('calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE)')
-            ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE, epsilon)
+            ans[op_algo] = calculate(op_algo,N,terms,algoF,algoN,algoFT,algoFTE, ep)
             t2 = time.time()
             t[op_algo] = t2 - t1
             #list_times[op_algo].append(t[op_algo])
