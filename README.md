@@ -1,6 +1,6 @@
 Indexing quering text
 =================================
-Projet was made with python3.7
+Project was made with python3.7
 ## Install
 > `pip install -r requirements.txt`
 
@@ -18,7 +18,7 @@ To run the program:
 It will construct the invited file and then show an interactive interface in console line to make query
 
 We advise to save the generated file on the first run:
-> `python main.py -n name_of_saved
+> `python main.py -n name_of_saved`
 
 To load it next time:
 > `python main.py -n name_of_saved -m name_of_saved_mit`
@@ -31,8 +31,35 @@ After the -t the input string contains the tests you want to run
 ## Optional arguments details:
 
 ### main
-
+  -d DATAFOLDER, --datafolder DATAFOLDER
+                        Choose datafolder
+  -n NAME, --name NAME  Choose filename
+  -m MAP, --map MAP     Map id term, set to load an index
+  -s STEMMING, --stemming STEMMING
+                        Do you want stemming ? (yes) -take a lit of time ==
+  -b BATCHSIZE, --batchsize BATCHSIZE
+                        Choose your batch size - default=1000
+  -e EPSILON, --epsilon EPSILON
+                        Epsilon for Fagins
 ### test
+  -d DATAFOLDER, --datafolder DATAFOLDER
+                        Choose datafolder
+  -n NAME, --name NAME  Choose filename
+  -m MAP, --map MAP     Map id term, set to load an index
+  -s STEMMING, --stemming STEMMING
+                        Do you want stemming ? (yes) -take a lit of time ==
+  -b BATCHSIZE, --batchsize BATCHSIZE
+                        Choose your batch size - default=1000
+  -e EPSILON, --epsilon EPSILON
+                        Epsilon for Fagins
+  -c NUMBEROFTEST, --numberoftest NUMBEROFTEST
+                        How many times tests must be run
+  -t TESTS, --tests TESTS
+                        Tests to run (a k e n b: algo, k, epsilon, nbterms,
+                        batchsize)
+  -r NBTERMS, --nbterms NBTERMS
+                        nb terms in request
+  -k K, --k K           k for fagins
 
 ## Report
 [Report]()
