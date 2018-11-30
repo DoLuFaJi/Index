@@ -41,24 +41,24 @@ After the -t the input string contains the tests you want to run
   - e EPSILON, --epsilon EPSILON
                         Epsilon for Fagins
 ### test
-  -d DATAFOLDER, --datafolder DATAFOLDER
+  - d DATAFOLDER, --datafolder DATAFOLDER
                         Choose datafolder
-  -n NAME, --name NAME  Choose filename
-  -m MAP, --map MAP     Map id term, set to load an index
-  -s STEMMING, --stemming STEMMING
+  - n NAME, --name NAME  Choose filename
+  - m MAP, --map MAP     Map id term, set to load an index
+  - s STEMMING, --stemming STEMMING
                         Do you want stemming ? (yes) -take a lit of time ==
-  -b BATCHSIZE, --batchsize BATCHSIZE
+  - b BATCHSIZE, --batchsize BATCHSIZE
                         Choose your batch size - default=1000
-  -e EPSILON, --epsilon EPSILON
+  - e EPSILON, --epsilon EPSILON
                         Epsilon for Fagins
-  -c NUMBEROFTEST, --numberoftest NUMBEROFTEST
+  - c NUMBEROFTEST, --numberoftest NUMBEROFTEST
                         How many times tests must be run
-  -t TESTS, --tests TESTS
+  - t TESTS, --tests TESTS
                         Tests to run (a k e n b: algo, k, epsilon, nbterms,
                         batchsize)
-  -r NBTERMS, --nbterms NBTERMS
+  - r NBTERMS, --nbterms NBTERMS
                         nb terms in request
-  -k K, --k K           k for fagins
+  - k K, --k K           k for fagins
 
 ## Report
 [Report]()
