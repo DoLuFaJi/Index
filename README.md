@@ -61,4 +61,4 @@ After the -t the input string contains the tests you want to run
   - k K, --k K           k for fagins
 
 ## Report
-[Report]()
+[Report](Rapport Indexing and Querying Text.pdf)
