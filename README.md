@@ -31,15 +31,14 @@ After the -t the input string contains the tests you want to run
 ## Optional arguments details:
 
 ### main
-  -d DATAFOLDER, --datafolder DATAFOLDER
-                        Choose datafolder
-  -n NAME, --name NAME  Choose filename
-  -m MAP, --map MAP     Map id term, set to load an index
-  -s STEMMING, --stemming STEMMING
+  - d DATAFOLDER, --datafolder DATAFOLDER Choose datafolder
+  - n NAME, --name NAME  Choose filename
+  - m MAP, --map MAP     Map id term, set to load an index
+  - s STEMMING, --stemming STEMMING
                         Do you want stemming ? (yes) -take a lit of time ==
-  -b BATCHSIZE, --batchsize BATCHSIZE
+  - b BATCHSIZE, --batchsize BATCHSIZE
                         Choose your batch size - default=1000
-  -e EPSILON, --epsilon EPSILON
+  - e EPSILON, --epsilon EPSILON
                         Epsilon for Fagins
 ### test
   -d DATAFOLDER, --datafolder DATAFOLDER
